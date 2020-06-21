@@ -22,16 +22,21 @@ int main(void) {
 	initField(&ptrMirror, row, column,false);
 	/* fills up first array with random values */
 	randomFill();
-	
-	constrainedCopy(ptrMirror, ptr,  row , column);	
-
-	
 	PrintMineField(ptr, row, column,5,5);
-	PrintMineField(ptrMirror, row, column, 25, 5);	
+	CalculateTheMinePossibility();
+	changeVisibilityOfPossibilityMap(ptr, false);
+	PrintMinePossibility(ptr, row, column, 5, 15,true);
 
 
-	CalculateTheMines();
-	PrintMinePossibility(ptr, row, column, 5, 15);
+
+	/*test*/
+	constrainedCopy(ptrMirror, ptr, row, column);
+	/*test*/
+	PrintMinePossibility(ptrMirror, row, column, 25,15,false);
+
+
+
+
 
 	return EXIT_SUCCESS;
 }
