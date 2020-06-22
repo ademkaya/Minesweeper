@@ -9,6 +9,9 @@ typedef struct mineData {
 	bool mineVisibility;
 	char minePossibility;
 	bool mine;
+
+	/* required for zero detection*/
+	// bool processed;
 }mineData_Typedef;
 
 

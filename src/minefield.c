@@ -15,6 +15,7 @@ static uint32_t staticRow = 0;
 static uint32_t staticColumn = 0;
 
 static uint8_t Mchecker(int16_t xCalc, int16_t yCalc);
+static bool limitsCheck(int16_t xCalc, int16_t yCalc);
 
 bool initField(mineData_Typedef*** ptr,uint16_t row, uint16_t column,bool AssignAsActual) {
 	bool retVal = true;
@@ -61,6 +62,8 @@ void PrintMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8
 		}
 	}
 }
+
+
 void PrintMinePossibility(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet,bool ActivateVisibility) {
 
 	int c = 0;
@@ -79,27 +82,7 @@ void PrintMinePossibility(mineData_Typedef** ptr, uint16_t row, uint16_t column,
 		}
 	}
 }
-/*1 - assigns Random mines onto the map.*/
-void randomFill() {
-	uint16_t c = 0;
-	uint16_t r = 0;
-	int rrr = 0;
-
-	for (c = 0; c < staticColumn; c++) {
-		for (r = 0; r < staticRow; r++) {
-
-			staticPtr[c][r].mine = false;
-
-			rrr = (int)rand() % 20;
-			if (rrr == 10) {
-				staticPtr[c][r].mine = true;
-			}
-			
-		}
-	}
-}
-
-void changeVisibilityOfPossibilityMap(mineData_Typedef** a,bool setVal) {
+void changeVisibilityOfPossibilityMap(mineData_Typedef** a, bool setVal) {
 	uint16_t x = 0;
 	uint16_t y = 0;
 
@@ -109,16 +92,15 @@ void changeVisibilityOfPossibilityMap(mineData_Typedef** a,bool setVal) {
 		}
 	}
 }
-
 /* 2 - Checks the assigned mines and calculates the surrounding mine counts */
 void CalculateTheMinePossibility(void) {
 	uint16_t x = 0;
 	uint16_t y = 0;
 	uint8_t mineCount = 0;
-	
+
 	//  staticPtr[c][r].data = 'M';
-	
-	for (x = 0; x < staticColumn; x++) {
+
+	for (x = 0; x < staticColumn; x++)  {
 		for (y = 0; y < staticRow; y++) {
 
 			mineCount = 0;
@@ -135,42 +117,124 @@ void CalculateTheMinePossibility(void) {
 		}
 	}
 }
+
+/*1 - assigns Random mines onto the map.*/
+void randomFill(void) {
+	uint16_t c = 0;
+	uint16_t r = 0;
+	int rrr = 0;
+
+	for (c = 0; c < staticColumn; c++) {
+		for (r = 0; r < staticRow; r++) {
+
+			staticPtr[c][r].mine = false;
+			staticPtr[c][r].mineVisibility = false;		/* as default hide all*/
+
+			rrr = (int)rand() % 20;
+			if (rrr == 10) {
+				staticPtr[c][r].mine = true;
+			}
+			
+		}
+	}
+}
+
+
+#define initVal		  0x00
+#define mineFound	  0xFF
+#define limitNotOK	  0x01
+#define cellProcessed	0x0A
+
+
+/* NOT  COMPLETED  YET */
+/* user input comes here*/
+uint8_t checkMine(uint16_t crow, uint16_t ccolumn,bool firstStart) {
+	
+	static uint16_t irow = 0;
+	static uint16_t icolumn = 0;
+	uint8_t retVal = initVal;
+
+
+	/* scanning around the limits return */
+	if (limitsCheck((int)crow, (int)ccolumn))
+		return limitNotOK;
+
+	if (firstStart) {
+		irow = crow;
+		icolumn = ccolumn;
+
+		/* check is the selected point is a mined point*/
+		if (staticPtr[ccolumn][crow].mine)
+			retVal = mineFound;
+
+		/* if not check is the possibility is not zero*/
+		if (staticPtr[ccolumn][crow].minePossibility != 0)
+			staticPtr[ccolumn][crow].mineVisibility = true;
+	}
+
+	/* if the possibility is equal zero open them up until to the non-zero point */
+	if ((staticPtr[ccolumn][crow].minePossibility == 0) && (!staticPtr[ccolumn][crow].mineVisibility)){
+		staticPtr[ccolumn][crow].mineVisibility = true;
+
+
+		if (checkMine(ccolumn + 1, crow - 1, false) != limitNotOK
+
+
+		if (!checkMine(ccolumn + 1, crow - 1, false))
+			return retVal;
+		if (!checkMine(ccolumn + 1 , crow	, false))
+			return retVal;
+		if (!checkMine(ccolumn + 1 , crow + 1, false))
+			return retVal;
+		if (!checkMine(ccolumn	  , crow + 1, false))
+			return retVal;
+		if (!checkMine(ccolumn - 1 , crow + 1, false))
+			return retVal;
+		if (!checkMine(ccolumn - 1 , crow	, false))
+			return retVal;
+		if (!checkMine(ccolumn - 1 , crow - 1, false))
+			return retVal;
+		if (!checkMine(ccolumn	  , crow - 1, false))
+			return retVal;
+
+	} else if (!staticPtr[ccolumn][crow].mineVisibility) {
+		/* this is the end of the zero possiblity which must be a number more than zero */
+		staticPtr[ccolumn][crow].mineVisibility = true;
+		retVal = cellProcessed;
+	}
+
+	return retVal;
+}
+
+
+
+
+/* VVVV STATICS COMES HERE VVVV */
 static uint8_t Mchecker(int16_t xCalc, int16_t yCalc) {
 	bool skip = false;
 	uint8_t retVal = 0;
+	
+	skip = limitsCheck(xCalc,yCalc);
+
+	if (!skip) {
+		if (staticPtr[xCalc][yCalc].mine)
+			retVal = 1;
+	}
+	else {
+		retVal = 0;
+	}
+
+	return retVal;
+}
+static bool limitsCheck(int16_t xCalc, int16_t yCalc) {
+	bool skip = false;
 		if ((xCalc < 0) || (yCalc < 0)) {
 			skip = true;
 		}
 		if ((xCalc >= (int16_t)staticColumn) || (yCalc >= (int16_t)staticRow)) {
 			skip = true;
 		}
-
-		if (!skip) {
-			if (staticPtr[xCalc][yCalc].mine)
-				retVal = 1;
-		} else {
-			retVal = 0;
-		}
-
-	return retVal;
-}
-
-
-/* user input comes here*/
-bool checkMine(uint16_t row, uint16_t column,bool firstStart) {
-	static uint16_t irow = 0;
-	static uint16_t icolumn = 0;
-
-	if (firstStart) {
-		irow = row;
-		icolumn = column;
-	}
-
-	/*selects the specified point and if no mines around it clears them*/
-
-	/* NOT IMPLEMENTED YET */
-
-	return false;
+	return skip;
 }
 
 void constrainedCopy(mineData_Typedef** a, mineData_Typedef** b, uint16_t row, uint16_t column) {

@@ -23,7 +23,9 @@ int main(void) {
 	/* fills up first array with random values */
 	randomFill();
 	PrintMineField(ptr, row, column,5,5);
+
 	CalculateTheMinePossibility();
+
 	changeVisibilityOfPossibilityMap(ptr, false);
 	PrintMinePossibility(ptr, row, column, 5, 15,true);
 
@@ -34,7 +36,7 @@ int main(void) {
 	/*test*/
 	PrintMinePossibility(ptrMirror, row, column, 25,15,false);
 
-
+	
 
 
 
