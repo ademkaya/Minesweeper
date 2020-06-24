@@ -140,22 +140,21 @@ void randomFill(void) {
 }
 
 
-#define initVal		  0x00
-#define mineFound	  0xFF
-#define limitNotOK	  0x01
+#define initVal		    0x00
+#define mineFound	    0xFF
+#define limitNotOK	    0x01
 #define cellProcessed	0x0A
 
 
 /* NOT  COMPLETED  YET */
 /* user input comes here*/
-uint8_t checkMine(uint16_t crow, uint16_t ccolumn,bool firstStart) {
-	
-	static uint16_t irow = 0;
-	static uint16_t icolumn = 0;
+uint8_t checkMine(int16_t crow, int16_t ccolumn,bool firstStart) {
+	/* y,x*/
+	static int16_t irow = 0;
+	static int16_t icolumn = 0;
 	uint8_t retVal = initVal;
 
-
-	/* scanning around the limits return */
+	/* scanning around the limits return	*/
 	if (limitsCheck((int)crow, (int)ccolumn))
 		return limitNotOK;
 
@@ -165,39 +164,30 @@ uint8_t checkMine(uint16_t crow, uint16_t ccolumn,bool firstStart) {
 
 		/* check is the selected point is a mined point*/
 		if (staticPtr[ccolumn][crow].mine)
-			retVal = mineFound;
-
-		/* if not check is the possibility is not zero*/
-		if (staticPtr[ccolumn][crow].minePossibility != 0)
-			staticPtr[ccolumn][crow].mineVisibility = true;
+			retVal = mineFound;	/* only in first input */
 	}
 
 	/* if the possibility is equal zero open them up until to the non-zero point */
-	if ((staticPtr[ccolumn][crow].minePossibility == 0) && (!staticPtr[ccolumn][crow].mineVisibility)){
+	if ((staticPtr[ccolumn][crow].minePossibility == nomineIcon) && (!staticPtr[ccolumn][crow].mineVisibility)){
 		staticPtr[ccolumn][crow].mineVisibility = true;
 
+		PrintMinePossibility(staticPtr, staticRow, staticColumn, 5, 15, true); // added for test purposes
 
-		if (checkMine(ccolumn + 1, crow - 1, false) != limitNotOK
+		for (int g = 0; g < 300000000; g++);		// added for test purposes
+
+			checkMine(crow, ccolumn + 1, false);			// x+1,y
+			checkMine(crow + 1, ccolumn + 1, false);
+			checkMine(crow + 1, ccolumn, false);
+			checkMine(crow - 1, ccolumn + 1, false);
+			checkMine(crow, ccolumn - 1, false);
+			checkMine(crow - 1, ccolumn - 1, false);
+			checkMine(crow - 1, ccolumn, false);
+			checkMine(crow - 1, ccolumn + 1, false);
 
 
-		if (!checkMine(ccolumn + 1, crow - 1, false))
-			return retVal;
-		if (!checkMine(ccolumn + 1 , crow	, false))
-			return retVal;
-		if (!checkMine(ccolumn + 1 , crow + 1, false))
-			return retVal;
-		if (!checkMine(ccolumn	  , crow + 1, false))
-			return retVal;
-		if (!checkMine(ccolumn - 1 , crow + 1, false))
-			return retVal;
-		if (!checkMine(ccolumn - 1 , crow	, false))
-			return retVal;
-		if (!checkMine(ccolumn - 1 , crow - 1, false))
-			return retVal;
-		if (!checkMine(ccolumn	  , crow - 1, false))
-			return retVal;
 
-	} else if (!staticPtr[ccolumn][crow].mineVisibility) {
+	}/* if the selection is a number which is different than zero and except the cell which includes mine */
+	else if ((staticPtr[ccolumn][crow].minePossibility != nomineIcon) && (!staticPtr[ccolumn][crow].mineVisibility) && (!staticPtr[ccolumn][crow].mine)) {
 		/* this is the end of the zero possiblity which must be a number more than zero */
 		staticPtr[ccolumn][crow].mineVisibility = true;
 		retVal = cellProcessed;
