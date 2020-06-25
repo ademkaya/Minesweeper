@@ -7,6 +7,9 @@
 #include "print.h"
 #include "minefield.h"
 
+
+
+void GetRowColumnFromUser(int16_t* r, int16_t* c);
 void intentionallyFill_Test(mineData_Typedef** _ptr, uint16_t row, uint16_t column);
 
 static uint16_t column = 0;
@@ -17,32 +20,49 @@ mineData_Typedef** ptr=NULL;
 int main(void) {
 
 	puts("!!!Hello World!!!"); /* prints !!!Hello World!!! */
-	column = 10;
-	row = 5;
-	initField(&ptr, row, column,true);
-	/* in order to make comparement, initialize the same array */
-	initField(&ptrMirror, row, column,false);
-
-	/* fills up first array with random values */
-	//randomFill();
-	intentionallyFill_Test(ptr,row,column);
-
-	PrintMineField(ptr, row, column,5,5);
-
-	CalculateTheMinePossibility();
-	changeVisibilityOfPossibilityMap(ptr, false);
-	PrintMinePossibility(ptr, row, column, 5, 15,true);
-
-
-	/*test*/
-	constrainedCopy(ptrMirror, ptr, row, column);
-	/*test*/
-	PrintMinePossibility(ptrMirror, row, column, 25,15,false);
-
-	checkMine(2, 2, true);
+	GetRowColumnFromUser(&row,&column);
 
 	return EXIT_SUCCESS;
 }
+/**
+		column = 10;
+		row = 8;
+		initField(&ptr, row, column,true);
+		// in order to make comparement, initialize the same array
+		initField(&ptrMirror, row, column, false);
+
+		// fills up first array with random values/
+		randomFill();
+		//intentionallyFill_Test(ptr,row,column);
+
+		PrintMineField(ptr, row, column, 5, 5);
+
+		CalculateTheMinePossibility();
+		changeVisibilityOfPossibilityMap(ptr, false);
+		PrintMinePossibility(ptr, row, column, 5, 15, true);
+
+		//test
+		constrainedCopy(ptrMirror, ptr, row, column);
+		//test
+		PrintMinePossibility(ptrMirror, row, column, 25, 5, false);
+
+		bool retVal = checkMine(2, 2, true);
+		PrintMinePossibility(ptr, row, column, 5, 15, true);
+*/
+
+/* Guard is needed !*/
+void GetRowColumnFromUser(int16_t* r, int16_t* c) {
+
+	printf("Enter the ROW value of the field : ");
+	scanf("%d", (int*)r);
+	printf("Enter the COLUMN value of the field : ");
+	scanf("%d", (int*)c);
+
+	printf("%d %d", *r, *c);
+}
+
+
+
 
 void intentionallyFill_Test(mineData_Typedef** _ptr, uint16_t row, uint16_t column) {
 	uint16_t c = 0;
@@ -59,6 +79,8 @@ void intentionallyFill_Test(mineData_Typedef** _ptr, uint16_t row, uint16_t colu
 	}
 
 	ptr[4][3].mine = true;
+	ptr[8][6].mine = true;
+	ptr[6][6].mine = true;
 
 }
 
@@ -67,7 +89,7 @@ void intentionallyFill_Test(mineData_Typedef** _ptr, uint16_t row, uint16_t colu
 
 	* mines are created in random fashion						done
 	* possibility map is created.								done
-	* map cover which will be gradually makes the area visible	....
+	* map cover which will be gradually makes the area visible	done
 	* user interaction											....
 
 */
