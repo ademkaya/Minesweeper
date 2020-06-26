@@ -7,6 +7,9 @@
 #include "print.h"
 #include "minefield.h"
 
+#include <WinBase.h>
+#include <consoleapi.h>
+
 
 
 void GetRowColumnFromUser(int16_t* r, int16_t* c);
@@ -21,6 +24,13 @@ int main(void) {
 
 	puts("!!!Hello World!!!"); /* prints !!!Hello World!!! */
 	GetRowColumnFromUser(&row,&column);
+
+	initField(&ptr, row, column, true);
+
+	PrintMineField(ptr, row, column, 5, 7);
+
+	//nonblocking keypress detection will be 
+
 
 	return EXIT_SUCCESS;
 }
@@ -83,6 +93,62 @@ void intentionallyFill_Test(mineData_Typedef** _ptr, uint16_t row, uint16_t colu
 	ptr[6][6].mine = true;
 
 }
+
+char NonBlockingKeyPressDetection(void) {
+	char keyPress = 0;
+	if (_kbhit())
+	{
+		keyPress = BlockingkeyPressDetection();
+	}
+	return keyPress;
+}
+
+/*--- Interaction ---*/
+char BlockingkeyPressDetection(void) {
+	static char ch = 0;
+	getChar_(&ch);
+	return(ch);
+}
+
+/*--- Interaction ---*/
+bool getChar_(char* ch) {
+	bool    ret = false;
+
+	HANDLE  stdIn = GetStdHandle(STD_INPUT_HANDLE);
+
+	DWORD   saveMode;
+	GetConsoleMode(stdIn, &saveMode);
+	SetConsoleMode(stdIn, ENABLE_PROCESSED_INPUT);
+
+	if (WaitForSingleObject(stdIn, INFINITE) == WAIT_OBJECT_0)
+	{
+		DWORD num;
+		ReadConsole(stdIn, ch, 1, &num, NULL);
+
+		if (num == 1) ret = true;
+	}
+
+	SetConsoleMode(stdIn, saveMode);
+
+	return(ret);
+}
+
+/*--- Interaction ---*/
+void clearScreen(void) {
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
+	system("clear");
+#endif
+
+#if defined(_WIN32) || defined(_WIN64)
+	system("cls");
+#endif
+}
+
+
+
+
+
+
 
 /**
 	@TODOs:

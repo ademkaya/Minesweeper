@@ -10,13 +10,21 @@
 #define mineBlock	(char)206
 #define mineIcon	(char)'M'
 #define nomineIcon	(char)'0'
+
+static const char Hline		   = (char)205;
+static const char Vline		   = (char)186;
+static const char RTCornerline = (char)187;
+static const char RBCornerline = (char)188;
+static const char LTCornerline = (char)201;
+static const char LBCornerline = (char)200;
+
 static mineData_Typedef** staticPtr = NULL;
 static uint32_t staticRow = 0;
 static uint32_t staticColumn = 0;
 
 static uint8_t Mchecker(int16_t xCalc, int16_t yCalc);
 static bool limitsCheck(int16_t xCalc, int16_t yCalc);
-
+static void SnakeframeCreation(uint8_t xOrigin, uint8_t yOrigin, uint8_t xLength, uint8_t yLength);
 bool initField(mineData_Typedef*** ptr,uint16_t row, uint16_t column,bool AssignAsActual) {
 	bool retVal = true;
 	uint16_t cntr = 0;
@@ -61,6 +69,9 @@ void PrintMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8
 				printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, nomineIcon);
 		}
 	}
+
+	SnakeframeCreation(PrintXOffSet - 1, PrintYOffSet - 1, column, row);
+
 }
 
 void PrintMinePossibility(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet,bool ActivateVisibility) {
@@ -92,6 +103,7 @@ void changeVisibilityOfPossibilityMap(mineData_Typedef** a, bool setVal) {
 		}
 	}
 }
+
 /* 2 - Checks the assigned mines and calculates the surrounding mine counts */
 void CalculateTheMinePossibility(void) {
 	uint16_t x = 0;
@@ -134,11 +146,9 @@ void randomFill(void) {
 			if (rrr == 10) {
 				staticPtr[c][r].mine = true;
 			}
-			
 		}
 	}
 }
-
 
 /* user input comes here*/
 uint8_t checkMine(int16_t crow, int16_t ccolumn,bool firstStart) {
@@ -177,7 +187,24 @@ uint8_t checkMine(int16_t crow, int16_t ccolumn,bool firstStart) {
 	return false;
 }
 
+static void SnakeframeCreation(uint8_t xOrigin, uint8_t yOrigin, uint8_t xLength, uint8_t yLength) {
 
+	printCharOnSpesificLocation(xOrigin, yOrigin, LTCornerline);
+	printCharOnSpesificLocation(xOrigin + xLength, yOrigin, RTCornerline);
+
+	printCharOnSpesificLocation(xOrigin, yOrigin + yLength, LBCornerline);
+	printCharOnSpesificLocation(xOrigin + xLength, yOrigin + yLength, RBCornerline);
+
+
+	for (uint8_t x = 1; x < xLength; x++) {
+		printCharOnSpesificLocation(xOrigin + x, yOrigin, Hline);
+		printCharOnSpesificLocation(xOrigin + x, yOrigin + yLength, Hline);
+	}
+	for (uint8_t y = 1; y < yLength; y++) {
+		printCharOnSpesificLocation(xOrigin, yOrigin + y, Vline);
+		printCharOnSpesificLocation(xOrigin + xLength, yOrigin + y, Vline);
+	}
+}
 /* VVVV STATICS COMES HERE VVVV */
 static uint8_t Mchecker(int16_t xCalc, int16_t yCalc) {
 	bool skip = false;
