@@ -12,6 +12,32 @@ bool getChar_(char* ch);
 
 
 
+char PointerToggle(char keyPress, Coord_Typedef* ptr, uint8_t PrintXOffSet, uint8_t PrintYOffSet) {
+    static uint16_t keyPressZeroCount = 0;
+    static bool		IconToogle = false;
+
+    if (keyPress == 0) {
+        keyPressZeroCount += 1;
+        if (keyPressZeroCount == ToogleConstant) {
+            keyPressZeroCount = 0;
+            if (!IconToogle) {
+                printCharOnSpesificLocation(ptr->X+ PrintXOffSet, ptr->Y+ PrintYOffSet, 0); // back stucture data will be placed here instead zero
+            }
+            else {
+                printCharOnSpesificLocation(ptr->X+ PrintXOffSet, ptr->Y+ PrintYOffSet, pointerIcon);
+            }
+            IconToogle = !IconToogle;
+        }
+
+    } else {
+        keyPressZeroCount = 0;
+    }
+
+    return keyPress;
+}
+
+
+
 /*--- Interaction ---*/
 void printStringOnSpesificLocation(uint16_t X, uint16_t Y, char* str) {
     printf("\337\33[%d;%dH%s\338", Y, X, str);

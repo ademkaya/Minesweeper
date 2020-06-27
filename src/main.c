@@ -7,16 +7,17 @@
 #include "print.h"
 #include "minefield.h"
 
-#include <WinBase.h>
-#include <consoleapi.h>
-
-
 
 void GetRowColumnFromUser(int16_t* r, int16_t* c);
 void intentionallyFill_Test(mineData_Typedef** _ptr, uint16_t row, uint16_t column);
+void MovePointer(char keyPress, mineData_Typedef** mineStr, Coord_Typedef* ptr, uint8_t PrintXOffSet, uint8_t PrintYOffSet, uint16_t xLength, uint16_t yLength);
+
+Coord_Typedef pointerCoord = { 0,0 };
 
 static uint16_t column = 0;
 static uint16_t row = 0;
+static const uint8_t XOffset = 5;
+static const uint8_t YOffset = 7;
 
 mineData_Typedef** ptrMirror = NULL;
 mineData_Typedef** ptr=NULL;
@@ -26,11 +27,18 @@ int main(void) {
 	GetRowColumnFromUser(&row,&column);
 
 	initField(&ptr, row, column, true);
+	//intentionallyFill_Test(ptr, row, column);
+	//CalculateTheMinePossibility();
 
-	PrintMineField(ptr, row, column, 5, 7);
+	PrintMineField(ptr, row, column, XOffset, YOffset);
 
 	//nonblocking keypress detection will be 
+	while (true)
+	{
+		char keyPress = NonBlockingKeyPressDetection();
+		MovePointer(keyPress, ptr, &pointerCoord, XOffset, YOffset, column, row);
 
+	}
 
 	return EXIT_SUCCESS;
 }
@@ -94,55 +102,55 @@ void intentionallyFill_Test(mineData_Typedef** _ptr, uint16_t row, uint16_t colu
 
 }
 
-char NonBlockingKeyPressDetection(void) {
-	char keyPress = 0;
-	if (_kbhit())
-	{
-		keyPress = BlockingkeyPressDetection();
-	}
-	return keyPress;
-}
+void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, uint8_t PrintXOffSet, uint8_t PrintYOffSet, uint16_t xLength, uint16_t yLength)
+{
 
-/*--- Interaction ---*/
-char BlockingkeyPressDetection(void) {
-	static char ch = 0;
-	getChar_(&ch);
-	return(ch);
-}
+	static Coord_Typedef prePtr = { -1,-1 };
+	static uint16_t keyPressZeroCount = 0;
+	static bool		IconToogle = false;
 
-/*--- Interaction ---*/
-bool getChar_(char* ch) {
-	bool    ret = false;
-
-	HANDLE  stdIn = GetStdHandle(STD_INPUT_HANDLE);
-
-	DWORD   saveMode;
-	GetConsoleMode(stdIn, &saveMode);
-	SetConsoleMode(stdIn, ENABLE_PROCESSED_INPUT);
-
-	if (WaitForSingleObject(stdIn, INFINITE) == WAIT_OBJECT_0)
-	{
-		DWORD num;
-		ReadConsole(stdIn, ch, 1, &num, NULL);
-
-		if (num == 1) ret = true;
+	if ((prePtr.X == -1) && (prePtr.Y == -1)) {
+		/* first call*/
+		prePtr.X = PrintXOffSet;
+		prePtr.Y = PrintYOffSet;
 	}
 
-	SetConsoleMode(stdIn, saveMode);
+	PointerToggle(keyPress, ptr, PrintXOffSet, PrintYOffSet);
 
-	return(ret);
+	if (keyPress == 0) {
+		return;
+	}
+
+	char normalizedKeyPress = toupper(keyPress);
+
+	if ((normalizedKeyPress == direction_UP) && ((ptr->Y - 1) >= 0)) {
+		ptr->X = ptr->X;
+		ptr->Y -= 1;
+	}
+
+	if ((normalizedKeyPress == direction_DOWN) && ((ptr->Y + 1) < yLength)) {
+		ptr->X = ptr->X;
+		ptr->Y += 1;
+	}
+
+	if ((normalizedKeyPress == direction_RIGHT) && ((ptr->X + 1) < (xLength))) {
+		ptr->X += 1;
+		ptr->Y = ptr->Y;
+	}
+
+	if ((normalizedKeyPress == direction_LEFT) && ((ptr->X - 1) >= 0)) {
+		ptr->X -= 1;
+		ptr->Y = ptr->Y;
+	}
+
+	
+	printCharOnSpesificLocation(prePtr.X, prePtr.Y, mineStr[prePtr.X - PrintXOffSet][prePtr.Y - PrintYOffSet].minePossibility);
+	printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, pointerIcon);
+	prePtr.X = (ptr->X)+ PrintXOffSet;
+	prePtr.Y = (ptr->Y)+ PrintYOffSet;
+
 }
 
-/*--- Interaction ---*/
-void clearScreen(void) {
-#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
-	system("clear");
-#endif
-
-#if defined(_WIN32) || defined(_WIN64)
-	system("cls");
-#endif
-}
 
 
 

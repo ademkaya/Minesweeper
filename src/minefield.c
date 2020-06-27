@@ -1,6 +1,6 @@
 
 
-	#include <stdio.h>		//puts
+#include <stdio.h>		//puts
 #include <stdlib.h>
 #include <time.h>
 
@@ -24,7 +24,8 @@ static uint32_t staticColumn = 0;
 
 static uint8_t Mchecker(int16_t xCalc, int16_t yCalc);
 static bool limitsCheck(int16_t xCalc, int16_t yCalc);
-static void SnakeframeCreation(uint8_t xOrigin, uint8_t yOrigin, uint8_t xLength, uint8_t yLength);
+static void SnakeframeCreation(uint8_t xOrigin, uint8_t yOrigin, uint16_t xLength, uint16_t yLength);
+
 bool initField(mineData_Typedef*** ptr,uint16_t row, uint16_t column,bool AssignAsActual) {
 	bool retVal = true;
 	uint16_t cntr = 0;
@@ -70,7 +71,7 @@ void PrintMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8
 		}
 	}
 
-	SnakeframeCreation(PrintXOffSet - 1, PrintYOffSet - 1, column, row);
+	SnakeframeCreation(PrintXOffSet - 1, PrintYOffSet - 1, column+1, row+1);
 
 }
 
@@ -114,7 +115,6 @@ void CalculateTheMinePossibility(void) {
 
 	for (x = 0; x < staticColumn; x++)  {
 		for (y = 0; y < staticRow; y++) {
-
 			mineCount = 0;
 			mineCount += Mchecker(x + 1, y);
 			mineCount += Mchecker(x + 1, y + 1);
@@ -125,7 +125,6 @@ void CalculateTheMinePossibility(void) {
 			mineCount += Mchecker(x, y - 1);
 			mineCount += Mchecker(x + 1, y - 1);
 			staticPtr[x][y].minePossibility = (char)(0x30 + mineCount);
-
 		}
 	}
 }
@@ -187,7 +186,7 @@ uint8_t checkMine(int16_t crow, int16_t ccolumn,bool firstStart) {
 	return false;
 }
 
-static void SnakeframeCreation(uint8_t xOrigin, uint8_t yOrigin, uint8_t xLength, uint8_t yLength) {
+static void SnakeframeCreation(uint8_t xOrigin, uint8_t yOrigin, uint16_t xLength, uint16_t yLength) {
 
 	printCharOnSpesificLocation(xOrigin, yOrigin, LTCornerline);
 	printCharOnSpesificLocation(xOrigin + xLength, yOrigin, RTCornerline);
@@ -196,11 +195,11 @@ static void SnakeframeCreation(uint8_t xOrigin, uint8_t yOrigin, uint8_t xLength
 	printCharOnSpesificLocation(xOrigin + xLength, yOrigin + yLength, RBCornerline);
 
 
-	for (uint8_t x = 1; x < xLength; x++) {
+	for (uint16_t x = 1; x < xLength; x++) {
 		printCharOnSpesificLocation(xOrigin + x, yOrigin, Hline);
 		printCharOnSpesificLocation(xOrigin + x, yOrigin + yLength, Hline);
 	}
-	for (uint8_t y = 1; y < yLength; y++) {
+	for (uint16_t y = 1; y < yLength; y++) {
 		printCharOnSpesificLocation(xOrigin, yOrigin + y, Vline);
 		printCharOnSpesificLocation(xOrigin + xLength, yOrigin + y, Vline);
 	}
