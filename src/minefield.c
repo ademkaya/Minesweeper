@@ -7,9 +7,6 @@
 #include "print.h"
 #include "minefield.h"
 
-#define mineBlock	(char)206
-#define mineIcon	(char)'M'
-#define nomineIcon	(char)'0'
 
 static const char Hline		   = (char)205;
 static const char Vline		   = (char)186;
@@ -72,17 +69,36 @@ void PrintMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8
 	}
 
 	SnakeframeCreation(PrintXOffSet - 1, PrintYOffSet - 1, column+1, row+1);
-
 }
-
-void PrintMinePossibility(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet,bool ActivateVisibility) {
+void PrintMergedMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet,bool activateVisibility) {
 
 	int c = 0;
 	int r = 0;
 
 	for (c = 0; c < column; c++) {
 		for (r = 0; r < row; r++) {
-			if (ActivateVisibility) {
+			if (activateVisibility) {
+				if (staticPtr[c][r].mineVisibility)
+					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, staticPtr[c][r].mergedMap);
+				else
+					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, (char)mineBlock);
+			} else {
+					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, (char)mineBlock);
+			}
+		}
+	}
+
+	SnakeframeCreation(PrintXOffSet - 1, PrintYOffSet - 1, column + 1, row + 1);
+}
+
+void PrintMinePossibility(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet,bool activateVisibility) {
+
+	int c = 0;
+	int r = 0;
+
+	for (c = 0; c < column; c++) {
+		for (r = 0; r < row; r++) {
+			if (activateVisibility) {
 				if (ptr[c][r].mineVisibility)
 					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, ptr[c][r].minePossibility);
 				else
@@ -111,10 +127,10 @@ void CalculateTheMinePossibility(void) {
 	uint16_t y = 0;
 	uint8_t mineCount = 0;
 
-	//  staticPtr[c][r].data = 'M';
 
 	for (x = 0; x < staticColumn; x++)  {
 		for (y = 0; y < staticRow; y++) {
+
 			mineCount = 0;
 			mineCount += Mchecker(x + 1, y);
 			mineCount += Mchecker(x + 1, y + 1);
@@ -125,6 +141,13 @@ void CalculateTheMinePossibility(void) {
 			mineCount += Mchecker(x, y - 1);
 			mineCount += Mchecker(x + 1, y - 1);
 			staticPtr[x][y].minePossibility = (char)(0x30 + mineCount);
+
+			// visibility map and mine places are merged!
+			if (staticPtr[x][y].mine) {
+				staticPtr[x][y].mergedMap = (char)mineIcon;
+			} else {
+				staticPtr[x][y].mergedMap = staticPtr[x][y].minePossibility;
+			}
 		}
 	}
 }

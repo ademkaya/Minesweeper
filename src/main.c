@@ -27,10 +27,10 @@ int main(void) {
 	GetRowColumnFromUser(&row,&column);
 
 	initField(&ptr, row, column, true);
-	//intentionallyFill_Test(ptr, row, column);
-	//CalculateTheMinePossibility();
+	randomFill();
+	CalculateTheMinePossibility();
 
-	PrintMineField(ptr, row, column, XOffset, YOffset);
+	PrintMergedMineField(ptr, row, column, XOffset, YOffset,true);
 
 	//nonblocking keypress detection will be 
 	while (true)
@@ -78,9 +78,6 @@ void GetRowColumnFromUser(int16_t* r, int16_t* c) {
 
 	printf("%d %d", *r, *c);
 }
-
-
-
 
 void intentionallyFill_Test(mineData_Typedef** _ptr, uint16_t row, uint16_t column) {
 	uint16_t c = 0;
@@ -143,8 +140,13 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 		ptr->Y = ptr->Y;
 	}
 
-	
-	printCharOnSpesificLocation(prePtr.X, prePtr.Y, mineStr[prePtr.X - PrintXOffSet][prePtr.Y - PrintYOffSet].minePossibility);
+	// recover back old icon back on the map
+	if (mineStr[prePtr.X - PrintXOffSet][prePtr.Y - PrintYOffSet].mineVisibility) {
+		printCharOnSpesificLocation(prePtr.X, prePtr.Y, mineStr[prePtr.X - PrintXOffSet][prePtr.Y - PrintYOffSet].mergedMap);
+	}
+	else {
+		printCharOnSpesificLocation(prePtr.X, prePtr.Y, (char)mineBlock);
+	}
 	printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, pointerIcon);
 	prePtr.X = (ptr->X)+ PrintXOffSet;
 	prePtr.Y = (ptr->Y)+ PrintYOffSet;
