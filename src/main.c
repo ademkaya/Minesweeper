@@ -23,7 +23,8 @@ mineData_Typedef** ptrMirror = NULL;
 mineData_Typedef** ptr=NULL;
 int main(void) {
 
-	puts("!!!Hello World!!!"); /* prints !!!Hello World!!! */
+	puts("HOW TO PLAY : \n - Flag the possible mine, pressing 'M' character \n - Reveal the area, pressing 'R' character\n" );
+
 	GetRowColumnFromUser(&row,&column);
 
 	initField(&ptr, row, column, true);
@@ -166,6 +167,7 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 	* mines are created in random fashion						done
 	* possibility map is created.								done
 	* map cover which will be gradually makes the area visible	done
-	* user interaction											....
+	* user interaction											partially done
+	* R and M interaction will be processed
 
 */
