@@ -1,2 +1,2 @@
-#Minesweeper
-minesweeper game in C
+# Minesweeper
+Minesweeper game in C
