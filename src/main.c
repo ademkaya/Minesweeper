@@ -12,18 +12,23 @@ void GetRowColumnFromUser(int16_t* r, int16_t* c);
 void intentionallyFill_Test(mineData_Typedef** _ptr, uint16_t row, uint16_t column);
 void MovePointer(char keyPress, mineData_Typedef** mineStr, Coord_Typedef* ptr, uint8_t PrintXOffSet, uint8_t PrintYOffSet, uint16_t xLength, uint16_t yLength);
 
-Coord_Typedef pointerCoord = { 0,0 };
+/* public pointer coordinate, relative*/
+static Coord_Typedef pointerCoord = { 0,0 };
 
 static uint16_t column = 0;
 static uint16_t row = 0;
 static const uint8_t XOffset = 5;
-static const uint8_t YOffset = 7;
+static const uint8_t YOffset = 12;
 
 mineData_Typedef** ptrMirror = NULL;
 mineData_Typedef** ptr=NULL;
 int main(void) {
 
-	puts("HOW TO PLAY : \n - Flag the possible mine, pressing 'M' character \n - Reveal the area, pressing 'R' character\n" );
+	static char keyPress = 0;
+	static char statickP = -1;
+
+
+	puts("\n\nHOW TO PLAY : \n - Flag the possible mine, pressing 'M' character \n - Reveal the area, pressing 'R' character\n" );
 
 	GetRowColumnFromUser(&row,&column);
 
@@ -36,9 +41,25 @@ int main(void) {
 	//nonblocking keypress detection will be 
 	while (true)
 	{
-		char keyPress = NonBlockingKeyPressDetection();
-		MovePointer(keyPress, ptr, &pointerCoord, XOffset, YOffset, column, row);
+		keyPress = toupper(NonBlockingKeyPressDetection());
 
+		/* catch the keyboard input of instruction_OPEN */
+		if (keyPress == instruction_OPEN) {
+			checkMine(pointerCoord.Y, pointerCoord.X, true);
+			// returns true if there is any mine...
+		} else {
+			//.. flag action comes here
+		}
+
+		/* move pointer inside the mine map*/
+		MovePointer(keyPress, ptr,&pointerCoord, XOffset, YOffset, column, row);   // print part may be put outside of the function
+
+
+		/*update the mine map when a key pressed*/
+		if (statickP != keyPress) {
+			PrintMergedMineField(ptr, row, column, XOffset, YOffset, true);
+			statickP = keyPress;
+		}
 	}
 
 	return EXIT_SUCCESS;
@@ -77,7 +98,7 @@ void GetRowColumnFromUser(int16_t* r, int16_t* c) {
 	printf("Enter the COLUMN value of the field : ");
 	scanf("%d", (int*)c);
 
-	printf("%d %d", *r, *c);
+	//printf("%d %d", *r, *c);
 }
 
 void intentionallyFill_Test(mineData_Typedef** _ptr, uint16_t row, uint16_t column) {
@@ -102,15 +123,14 @@ void intentionallyFill_Test(mineData_Typedef** _ptr, uint16_t row, uint16_t colu
 
 void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, uint8_t PrintXOffSet, uint8_t PrintYOffSet, uint16_t xLength, uint16_t yLength)
 {
-
-	static Coord_Typedef prePtr = { -1,-1 };
+	static Coord_Typedef prePointerPtr = { -1,-1 };
 	static uint16_t keyPressZeroCount = 0;
 	static bool		IconToogle = false;
 
-	if ((prePtr.X == -1) && (prePtr.Y == -1)) {
+	if ((prePointerPtr.X == -1) && (prePointerPtr.Y == -1)) {
 		/* first call*/
-		prePtr.X = PrintXOffSet;
-		prePtr.Y = PrintYOffSet;
+		prePointerPtr.X = PrintXOffSet;
+		prePointerPtr.Y = PrintYOffSet;
 	}
 
 	PointerToggle(keyPress, ptr, PrintXOffSet, PrintYOffSet);
@@ -119,38 +139,38 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 		return;
 	}
 
-	char normalizedKeyPress = toupper(keyPress);
+	//char normalizedKeyPress = toupper(keyPress);
 
-	if ((normalizedKeyPress == direction_UP) && ((ptr->Y - 1) >= 0)) {
+	if ((keyPress == direction_UP) && ((ptr->Y - 1) >= 0)) {
 		ptr->X = ptr->X;
 		ptr->Y -= 1;
 	}
 
-	if ((normalizedKeyPress == direction_DOWN) && ((ptr->Y + 1) < yLength)) {
+	if ((keyPress == direction_DOWN) && ((ptr->Y + 1) < yLength)) {
 		ptr->X = ptr->X;
 		ptr->Y += 1;
 	}
 
-	if ((normalizedKeyPress == direction_RIGHT) && ((ptr->X + 1) < (xLength))) {
+	if ((keyPress == direction_RIGHT) && ((ptr->X + 1) < (xLength))) {
 		ptr->X += 1;
 		ptr->Y = ptr->Y;
 	}
 
-	if ((normalizedKeyPress == direction_LEFT) && ((ptr->X - 1) >= 0)) {
+	if ((keyPress == direction_LEFT) && ((ptr->X - 1) >= 0)) {
 		ptr->X -= 1;
 		ptr->Y = ptr->Y;
 	}
 
 	// recover back old icon back on the map
-	if (mineStr[prePtr.X - PrintXOffSet][prePtr.Y - PrintYOffSet].mineVisibility) {
-		printCharOnSpesificLocation(prePtr.X, prePtr.Y, mineStr[prePtr.X - PrintXOffSet][prePtr.Y - PrintYOffSet].mergedMap);
+	if (mineStr[prePointerPtr.X - PrintXOffSet][prePointerPtr.Y - PrintYOffSet].mineVisibility) {
+		printCharOnSpesificLocation(prePointerPtr.X, prePointerPtr.Y, mineStr[prePointerPtr.X - PrintXOffSet][prePointerPtr.Y - PrintYOffSet].mergedMap);
 	}
 	else {
-		printCharOnSpesificLocation(prePtr.X, prePtr.Y, (char)mineBlock);
+		printCharOnSpesificLocation(prePointerPtr.X, prePointerPtr.Y, (char)mineBlock);
 	}
 	printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, pointerIcon);
-	prePtr.X = (ptr->X)+ PrintXOffSet;
-	prePtr.Y = (ptr->Y)+ PrintYOffSet;
+	prePointerPtr.X = (ptr->X)+ PrintXOffSet;
+	prePointerPtr.Y = (ptr->Y)+ PrintYOffSet;
 
 }
 
@@ -168,6 +188,7 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 	* possibility map is created.								done
 	* map cover which will be gradually makes the area visible	done
 	* user interaction											partially done
-	* R and M interaction will be processed
+	* [R]eveal interaction will be processed					Reveal is done
+	* [M]ine   interaction will be processed					....
 
 */

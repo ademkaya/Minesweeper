@@ -71,7 +71,6 @@ void PrintMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8
 	SnakeframeCreation(PrintXOffSet - 1, PrintYOffSet - 1, column+1, row+1);
 }
 void PrintMergedMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet,bool activateVisibility) {
-
 	int c = 0;
 	int r = 0;
 
@@ -173,7 +172,7 @@ void randomFill(void) {
 }
 
 /* user input comes here*/
-uint8_t checkMine(int16_t crow, int16_t ccolumn,bool firstStart) {
+bool checkMine(int16_t crow, int16_t ccolumn,bool firstStart) {
 	/* y,x*/
 	static int16_t irow = 0;
 	static int16_t icolumn = 0;
@@ -205,7 +204,7 @@ uint8_t checkMine(int16_t crow, int16_t ccolumn,bool firstStart) {
 		/* this is the end of the zero possiblity which must be a number more than zero */
 		staticPtr[ccolumn][crow].mineVisibility = true;
 	}
-	//(staticPtr[ccolumn][crow].minePossibility != nomineIcon)  &&
+
 	return false;
 }
 

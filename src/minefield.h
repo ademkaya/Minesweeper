@@ -27,7 +27,6 @@ void CalculateTheMinePossibility(void);
 void changeVisibilityOfPossibilityMap(mineData_Typedef** a, bool setVal);
 void randomFill(void);
 
-uint8_t checkMine(int16_t crow, int16_t ccolumn, bool firstStart);
-
+bool checkMine(int16_t crow, int16_t ccolumn, bool firstStart);
 
 #endif // !_MINEFIELD_H_

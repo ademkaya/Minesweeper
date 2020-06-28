@@ -24,6 +24,8 @@ extern "C" {
 #define direction_DOWN	(char)'S'
 #define direction_RIGHT (char)'D'
 #define direction_LEFT	(char)'A'
+#define instruction_FLAG	(char)'M'
+#define instruction_OPEN	(char)'R'
 
 	typedef struct coord {
 		int16_t X;
