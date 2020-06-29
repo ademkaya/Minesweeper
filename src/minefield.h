@@ -7,11 +7,13 @@
 #define mineBlock	(char)206
 #define mineIcon	(char)'M'
 #define nomineIcon	(char)'0'
+#define flaggedMine	(char)176
 
 typedef struct mineData {
 	bool mineVisibility;
 	char minePossibility;
 	bool mine;
+	bool mineFlaggedByUser;
 	char mergedMap;
 }mineData_Typedef;
 
@@ -28,5 +30,6 @@ void changeVisibilityOfPossibilityMap(mineData_Typedef** a, bool setVal);
 void randomFill(void);
 
 bool checkMine(int16_t crow, int16_t ccolumn, bool firstStart);
+bool flagMine(int16_t crow, int16_t ccolumn);
 
 #endif // !_MINEFIELD_H_

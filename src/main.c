@@ -1,4 +1,4 @@
-
+﻿
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -27,7 +27,6 @@ int main(void) {
 	static char keyPress = 0;
 	static char statickP = -1;
 
-
 	puts("\n\nHOW TO PLAY : \n - Flag the possible mine, pressing 'M' character \n - Reveal the area, pressing 'R' character\n" );
 
 	GetRowColumnFromUser(&row,&column);
@@ -47,13 +46,13 @@ int main(void) {
 		if (keyPress == instruction_OPEN) {
 			checkMine(pointerCoord.Y, pointerCoord.X, true);
 			// returns true if there is any mine...
-		} else {
+		} else if (keyPress == instruction_FLAG) {
 			//.. flag action comes here
+
 		}
 
 		/* move pointer inside the mine map*/
 		MovePointer(keyPress, ptr,&pointerCoord, XOffset, YOffset, column, row);   // print part may be put outside of the function
-
 
 		/*update the mine map when a key pressed*/
 		if (statickP != keyPress) {
@@ -118,7 +117,6 @@ void intentionallyFill_Test(mineData_Typedef** _ptr, uint16_t row, uint16_t colu
 	ptr[4][3].mine = true;
 	ptr[8][6].mine = true;
 	ptr[6][6].mine = true;
-
 }
 
 void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, uint8_t PrintXOffSet, uint8_t PrintYOffSet, uint16_t xLength, uint16_t yLength)
@@ -184,11 +182,13 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 /**
 	@TODOs:
 
-	* mines are created in random fashion						done
-	* possibility map is created.								done
-	* map cover which will be gradually makes the area visible	done
-	* user interaction											partially done
-	* [R]eveal interaction will be processed					Reveal is done
-	* [M]ine   interaction will be processed					....
+	* mines are created in random fashion								done
+	* possibility map is created.										done
+	* map cover which will be gradually makes the area visible			done
+	* user interaction													partially done
+	* [R]eveal interaction will be processed							done
 
+	* [M]ine   interaction will be processed							continuing
+	* totalMineCount is added will be resetted when a new game started	....
+	* flagMine will be completed										....
 */

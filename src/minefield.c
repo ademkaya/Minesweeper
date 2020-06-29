@@ -19,6 +19,9 @@ static mineData_Typedef** staticPtr = NULL;
 static uint32_t staticRow = 0;
 static uint32_t staticColumn = 0;
 
+static uint16_t totalMineCount = 0;
+static uint16_t flaggedMineCount = 0;
+
 static uint8_t Mchecker(int16_t xCalc, int16_t yCalc);
 static bool limitsCheck(int16_t xCalc, int16_t yCalc);
 static void SnakeframeCreation(uint8_t xOrigin, uint8_t yOrigin, uint16_t xLength, uint16_t yLength);
@@ -78,9 +81,14 @@ void PrintMergedMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column,
 		for (r = 0; r < row; r++) {
 			if (activateVisibility) {
 				if (staticPtr[c][r].mineVisibility)
+				{
 					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, staticPtr[c][r].mergedMap);
-				else
+
+				} else {
+
 					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, (char)mineBlock);
+
+				}
 			} else {
 					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, (char)mineBlock);
 			}
@@ -166,9 +174,25 @@ void randomFill(void) {
 			rrr = (int)rand() % 20;
 			if (rrr == 10) {
 				staticPtr[c][r].mine = true;
+				totalMineCount += 1;
 			}
 		}
 	}
+}
+
+/* user input comes here*/
+bool flagMine(int16_t crow, int16_t ccolumn) {
+
+	/*NOT COMPLETED YET!*/
+
+	staticPtr[ccolumn][crow].mineFlaggedByUser = true;
+	//.. print flaggedmine icon
+	if (staticPtr[ccolumn][crow].mine) {
+		flaggedMineCount += 1;
+	}
+
+
+	return 0;
 }
 
 /* user input comes here*/
