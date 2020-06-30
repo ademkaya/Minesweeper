@@ -89,6 +89,11 @@ void PrintMergedMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column,
 					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, (char)mineBlock);
 
 				}
+
+				if (staticPtr[c][r].mineFlaggedByUser) {
+					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, (char)flaggedMine);
+				}
+
 			} else {
 					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, (char)mineBlock);
 			}
@@ -181,14 +186,21 @@ void randomFill(void) {
 }
 
 /* user input comes here*/
-bool flagMine(int16_t crow, int16_t ccolumn) {
+bool flagAction(int16_t crow, int16_t ccolumn,bool flagUnflag) {
 
 	/*NOT COMPLETED YET!*/
+	if (flagUnflag) {
 
-	staticPtr[ccolumn][crow].mineFlaggedByUser = true;
-	//.. print flaggedmine icon
-	if (staticPtr[ccolumn][crow].mine) {
-		flaggedMineCount += 1;
+		staticPtr[ccolumn][crow].mineFlaggedByUser = true;
+		//.. print flaggedmine icon
+		if (staticPtr[ccolumn][crow].mine) {
+			flaggedMineCount += 1;
+		}
+
+	} else {
+
+		//....
+
 	}
 
 

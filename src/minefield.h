@@ -30,6 +30,6 @@ void changeVisibilityOfPossibilityMap(mineData_Typedef** a, bool setVal);
 void randomFill(void);
 
 bool checkMine(int16_t crow, int16_t ccolumn, bool firstStart);
-bool flagMine(int16_t crow, int16_t ccolumn);
+bool flagAction(int16_t crow, int16_t ccolumn, bool flagUnflag);
 
 #endif // !_MINEFIELD_H_

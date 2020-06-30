@@ -26,6 +26,7 @@ int main(void) {
 
 	static char keyPress = 0;
 	static char statickP = -1;
+	static char mineResult = false;
 
 	puts("\n\nHOW TO PLAY : \n - Flag the possible mine, pressing 'M' character \n - Reveal the area, pressing 'R' character\n" );
 
@@ -44,11 +45,18 @@ int main(void) {
 
 		/* catch the keyboard input of instruction_OPEN */
 		if (keyPress == instruction_OPEN) {
-			checkMine(pointerCoord.Y, pointerCoord.X, true);
-			// returns true if there is any mine...
+			if (!ptr[pointerCoord.X][pointerCoord.Y].mineFlaggedByUser)
+				mineResult = checkMine(pointerCoord.Y, pointerCoord.X, true);
+				if (mineResult) {
+					ptr[pointerCoord.X][pointerCoord.Y].mineVisibility = true;  // temporary
+					//...for now show the mine only... game finishes
+				}
 		} else if (keyPress == instruction_FLAG) {
-			//.. flag action comes here
+				//.. flag action comes here
+				flagAction(pointerCoord.Y, pointerCoord.X, true);
 
+		} else if (keyPress == instruction_RemoveFLAG) {
+			//...
 		}
 
 		/* move pointer inside the mine map*/
@@ -191,4 +199,5 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 	* [M]ine   interaction will be processed							continuing
 	* totalMineCount is added will be resetted when a new game started	....
 	* flagMine will be completed										....
+	* unflagMine will be added											....
 */
