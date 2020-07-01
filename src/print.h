@@ -39,7 +39,6 @@ extern "C" {
 	char BlockingkeyPressDetection(void);
 	void clearScreen(void);
 	bool getChar_(char* ch);
-	char PointerToggle(char keyPress, Coord_Typedef* ptr, uint8_t PrintXOffSet, uint8_t PrintYOffSet);
 
 #ifdef __cplusplus
 }

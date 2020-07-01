@@ -10,7 +10,7 @@
 
 void GetRowColumnFromUser(int16_t* r, int16_t* c);
 void intentionallyFill_Test(mineData_Typedef** _ptr, uint16_t row, uint16_t column);
-void MovePointer(char keyPress, mineData_Typedef** mineStr, Coord_Typedef* ptr, uint8_t PrintXOffSet, uint8_t PrintYOffSet, uint16_t xLength, uint16_t yLength);
+void MovePointer(char keyPress, mineData_Typedef** mineStr, Coord_Typedef* ptr, uint8_t PrintXOffSet, uint8_t PrintYOffSet, uint16_t xLength, uint16_t yLength,bool IsgameFinishes);
 
 /* public pointer coordinate, relative*/
 static Coord_Typedef pointerCoord = { 0,0 };
@@ -24,12 +24,12 @@ mineData_Typedef** ptrMirror = NULL;
 mineData_Typedef** ptr=NULL;
 int main(void) {
 
+	static bool flagResult = false;
 	static char keyPress = 0;
 	static char statickP = -1;
 	static char mineResult = false;
 
 	puts("\n\nHOW TO PLAY : \n - Flag the possible mine, pressing 'M' character \n - Reveal the area, pressing 'R' character\n" );
-
 	GetRowColumnFromUser(&row,&column);
 
 	initField(&ptr, row, column, true);
@@ -38,7 +38,6 @@ int main(void) {
 
 	PrintMergedMineField(ptr, row, column, XOffset, YOffset,true);
 
-	//nonblocking keypress detection will be 
 	while (true)
 	{
 		keyPress = toupper(NonBlockingKeyPressDetection());
@@ -53,14 +52,23 @@ int main(void) {
 				}
 		} else if (keyPress == instruction_FLAG) {
 				//.. flag action comes here
-				flagAction(pointerCoord.Y, pointerCoord.X, true);
+				flagResult = flagAction(pointerCoord.Y, pointerCoord.X, true);
+				if (flagResult) {
+					// reveal the board .... 
+					changeVisibilityOfPossibilityMap(ptr,true, true);
+					// stop the toggling icon
+					// -- gets into MovePointer via flagResult then stops the pointer
+					// and congragulate the player
+					// ....
+					// game successfully finishes...
+				}
 
 		} else if (keyPress == instruction_RemoveFLAG) {
 			//...
 		}
 
 		/* move pointer inside the mine map*/
-		MovePointer(keyPress, ptr,&pointerCoord, XOffset, YOffset, column, row);   // print part may be put outside of the function
+		MovePointer(keyPress, ptr,&pointerCoord, XOffset, YOffset, column, row, flagResult);   // print part may be put outside of the function
 
 		/*update the mine map when a key pressed*/
 		if (statickP != keyPress) {
@@ -71,31 +79,6 @@ int main(void) {
 
 	return EXIT_SUCCESS;
 }
-/**
-		column = 10;
-		row = 8;
-		initField(&ptr, row, column,true);
-		// in order to make comparement, initialize the same array
-		initField(&ptrMirror, row, column, false);
-
-		// fills up first array with random values/
-		randomFill();
-		//intentionallyFill_Test(ptr,row,column);
-
-		PrintMineField(ptr, row, column, 5, 5);
-
-		CalculateTheMinePossibility();
-		changeVisibilityOfPossibilityMap(ptr, false);
-		PrintMinePossibility(ptr, row, column, 5, 15, true);
-
-		//test
-		constrainedCopy(ptrMirror, ptr, row, column);
-		//test
-		PrintMinePossibility(ptrMirror, row, column, 25, 5, false);
-
-		bool retVal = checkMine(2, 2, true);
-		PrintMinePossibility(ptr, row, column, 5, 15, true);
-*/
 
 /* Guard is needed !*/
 void GetRowColumnFromUser(int16_t* r, int16_t* c) {
@@ -127,7 +110,7 @@ void intentionallyFill_Test(mineData_Typedef** _ptr, uint16_t row, uint16_t colu
 	ptr[6][6].mine = true;
 }
 
-void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, uint8_t PrintXOffSet, uint8_t PrintYOffSet, uint16_t xLength, uint16_t yLength)
+void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, uint8_t PrintXOffSet, uint8_t PrintYOffSet, uint16_t xLength, uint16_t yLength,bool IsgameFinishes)
 {
 	static Coord_Typedef prePointerPtr = { -1,-1 };
 	static uint16_t keyPressZeroCount = 0;
@@ -139,7 +122,10 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 		prePointerPtr.Y = PrintYOffSet;
 	}
 
-	PointerToggle(keyPress, ptr, PrintXOffSet, PrintYOffSet);
+	if (!IsgameFinishes)
+		PointerToggle(keyPress, mineStr, ptr, PrintXOffSet, PrintYOffSet);
+	else
+		printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, mineStr[ptr->X][ptr->Y].mergedMap);
 
 	if (keyPress == 0) {
 		return;
@@ -190,14 +176,18 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 /**
 	@TODOs:
 
-	* mines are created in random fashion								done
-	* possibility map is created.										done
-	* map cover which will be gradually makes the area visible			done
-	* user interaction													partially done
-	* [R]eveal interaction will be processed							done
+	* mines are created in random fashion									done
+	* possibility map is created.											done
+	* map cover which will be gradually makes the area visible				done
+	* user interaction														partially done
+	* [R]eveal interaction will be processed								done
 
-	* [M]ine   interaction will be processed							continuing
-	* totalMineCount is added will be resetted when a new game started	....
-	* flagMine will be completed										....
-	* unflagMine will be added											....
+	* [M]ine   interaction will be processed								done
+	* totalMineCount is added will be resetted when a new game started		....
+	* flagMine will be completed											done
+	* unflagMine will be added												....
+
+	* PointerToggle will be stopped when the games completed				.....
+	* mine field will be visible on pointer toogling... now writes zero		done
+	* GetRowColumnFromUser ...  Guard is needed !							....
 */

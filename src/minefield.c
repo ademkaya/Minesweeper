@@ -20,7 +20,7 @@ static uint32_t staticRow = 0;
 static uint32_t staticColumn = 0;
 
 static uint16_t totalMineCount = 0;
-static uint16_t flaggedMineCount = 0;
+static uint16_t correctlyflaggedMineCount = 0;
 
 static uint8_t Mchecker(int16_t xCalc, int16_t yCalc);
 static bool limitsCheck(int16_t xCalc, int16_t yCalc);
@@ -56,6 +56,35 @@ bool initField(mineData_Typedef*** ptr,uint16_t row, uint16_t column,bool Assign
 
 	return retVal;
 }
+
+char PointerToggle(char keyPress, mineData_Typedef** mineStr, Coord_Typedef* ptr, uint8_t PrintXOffSet, uint8_t PrintYOffSet) {
+	static uint16_t keyPressZeroCount = 0;
+	static bool		IconToogle = false;
+
+	if (keyPress == 0) {
+		keyPressZeroCount += 1;
+		if (keyPressZeroCount == ToogleConstant) {
+			keyPressZeroCount = 0;
+			if (!IconToogle) {
+				if (mineStr[ptr->X][ptr->Y].mineVisibility)
+					printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, mineStr[ptr->X][ptr->Y].mergedMap); 
+				else
+					printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, 0); 
+			}
+			else {
+				printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, pointerIcon);
+			}
+			IconToogle = !IconToogle;
+		}
+
+	}
+	else {
+		keyPressZeroCount = 0;
+	}
+
+	return keyPress;
+}
+
 
 void PrintMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet) {
 
@@ -122,13 +151,17 @@ void PrintMinePossibility(mineData_Typedef** ptr, uint16_t row, uint16_t column,
 	}
 }
 
-void changeVisibilityOfPossibilityMap(mineData_Typedef** a, bool setVal) {
+void changeVisibilityOfPossibilityMap(mineData_Typedef** a, bool revealtheFlagged,bool setVal) {
 	uint16_t x = 0;
 	uint16_t y = 0;
 
 	for (x = 0; x < staticColumn; x++) {
 		for (y = 0; y < staticRow; y++) {
 			a[x][y].mineVisibility = setVal;
+			if ((revealtheFlagged)&&((a[x][y].mineFlaggedByUser))){
+				a[x][y].mineFlaggedByUser = false;
+				a[x][y].mergedMap = (char)mineIcon;
+			}
 		}
 	}
 }
@@ -188,13 +221,17 @@ void randomFill(void) {
 /* user input comes here*/
 bool flagAction(int16_t crow, int16_t ccolumn,bool flagUnflag) {
 
+	bool retVal = false;
 	/*NOT COMPLETED YET!*/
 	if (flagUnflag) {
 
 		staticPtr[ccolumn][crow].mineFlaggedByUser = true;
 		//.. print flaggedmine icon
-		if (staticPtr[ccolumn][crow].mine) {
-			flaggedMineCount += 1;
+		if (staticPtr[ccolumn][crow].mine)
+		{
+			correctlyflaggedMineCount += 1;
+			if (correctlyflaggedMineCount == totalMineCount)
+				retVal = true;
 		}
 
 	} else {
@@ -204,7 +241,7 @@ bool flagAction(int16_t crow, int16_t ccolumn,bool flagUnflag) {
 	}
 
 
-	return 0;
+	return retVal;
 }
 
 /* user input comes here*/
