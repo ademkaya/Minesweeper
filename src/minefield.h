@@ -9,6 +9,8 @@
 #define nomineIcon	(char)'0'
 #define flaggedMine	(char)176
 
+
+
 typedef struct mineData {
 	bool mineVisibility;
 	char minePossibility;

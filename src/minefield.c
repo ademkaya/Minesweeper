@@ -66,10 +66,17 @@ char PointerToggle(char keyPress, mineData_Typedef** mineStr, Coord_Typedef* ptr
 		if (keyPressZeroCount == ToogleConstant) {
 			keyPressZeroCount = 0;
 			if (!IconToogle) {
-				if (mineStr[ptr->X][ptr->Y].mineVisibility)
-					printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, mineStr[ptr->X][ptr->Y].mergedMap); 
-				else
-					printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, 0); 
+				if (mineStr[ptr->X][ptr->Y].mineVisibility) {
+					if (!mineStr[ptr->X][ptr->Y].mineFlaggedByUser)
+						printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, mineStr[ptr->X][ptr->Y].mergedMap);
+					else
+						printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, flaggedMine);
+				} else {
+					if (!mineStr[ptr->X][ptr->Y].mineFlaggedByUser)
+						printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, 0);
+					else
+						printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, flaggedMine);
+				}
 			}
 			else {
 				printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, pointerIcon);
@@ -236,8 +243,11 @@ bool flagAction(int16_t crow, int16_t ccolumn,bool flagUnflag) {
 
 	} else {
 
-		//....
-
+		staticPtr[ccolumn][crow].mineFlaggedByUser = false;
+		if (staticPtr[ccolumn][crow].mine) {
+			staticPtr[ccolumn][crow].mineVisibility = false;
+			correctlyflaggedMineCount -= 1;			
+		}
 	}
 
 

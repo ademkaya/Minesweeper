@@ -25,7 +25,7 @@ extern "C" {
 #define direction_RIGHT (char)'D'
 #define direction_LEFT	(char)'A'
 #define instruction_FLAG		(char)'F'
-#define instruction_RemoveFLAG	(char)'R'
+#define instruction_RemoveFLAG	(char)'F'
 #define instruction_OPEN		(char)'O'
 
 	typedef struct coord {

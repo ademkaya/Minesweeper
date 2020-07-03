@@ -50,21 +50,24 @@ int main(void) {
 					ptr[pointerCoord.X][pointerCoord.Y].mineVisibility = true;  // temporary
 					//...for now show the mine only... game finishes
 				}
-		} else if (keyPress == instruction_FLAG) {
+		} else if ((keyPress == instruction_FLAG) || (keyPress == instruction_RemoveFLAG)){
 				//.. flag action comes here
+			if (!ptr[pointerCoord.X][pointerCoord.Y].mineFlaggedByUser) {
 				flagResult = flagAction(pointerCoord.Y, pointerCoord.X, true);
 				if (flagResult) {
 					// reveal the board .... 
-					changeVisibilityOfPossibilityMap(ptr,true, true);
+					changeVisibilityOfPossibilityMap(ptr, true, true);
 					// stop the toggling icon
 					// -- gets into MovePointer via flagResult then stops the pointer
 					// and congragulate the player
 					// ....
 					// game successfully finishes...
+					//...
 				}
-
-		} else if (keyPress == instruction_RemoveFLAG) {
-			//...
+			} else {
+				//.. unflag action comes here
+					flagAction(pointerCoord.Y, pointerCoord.X, false);
+			}
 		}
 
 		/* move pointer inside the mine map*/
@@ -186,8 +189,10 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 	* totalMineCount is added will be resetted when a new game started		....
 	* flagMine will be completed											done
 	* unflagMine will be added												....
+	* congragulate the player												....
+	* game successfully finishes											....
 
-	* PointerToggle will be stopped when the games completed				.....
+	* PointerToggle will be stopped when the games completed				done
 	* mine field will be visible on pointer toogling... now writes zero		done
 	* GetRowColumnFromUser ...  Guard is needed !							....
 */
