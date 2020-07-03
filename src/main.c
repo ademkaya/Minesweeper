@@ -36,7 +36,7 @@ int main(void) {
 	randomFill();
 	CalculateTheMinePossibility();
 
-	PrintMergedMineField(ptr, row, column, XOffset, YOffset,true);
+	PrintMergedMineField(ptr, row, column, XOffset, YOffset,true,false);
 
 	while (true)
 	{
@@ -47,8 +47,8 @@ int main(void) {
 			if (!ptr[pointerCoord.X][pointerCoord.Y].mineFlaggedByUser)
 				mineResult = checkMine(pointerCoord.Y, pointerCoord.X, true);
 				if (mineResult) {
-					ptr[pointerCoord.X][pointerCoord.Y].mineVisibility = true;  // temporary
-					//...for now show the mine only... game finishes
+					/* END GAME */
+					EndGameCheer();
 				}
 		} else if ((keyPress == instruction_FLAG) || (keyPress == instruction_RemoveFLAG)){
 				//.. flag action comes here
@@ -75,7 +75,7 @@ int main(void) {
 
 		/*update the mine map when a key pressed*/
 		if (statickP != keyPress) {
-			PrintMergedMineField(ptr, row, column, XOffset, YOffset, true);
+			PrintMergedMineField(ptr, row, column, XOffset, YOffset, true, mineResult);
 			statickP = keyPress;
 		}
 	}
@@ -188,11 +188,14 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 	* [M]ine   interaction will be processed								done
 	* totalMineCount is added will be resetted when a new game started		....
 	* flagMine will be completed											done
-	* unflagMine will be added												....
+	* unflagMine will be added												done
 	* congragulate the player												....
 	* game successfully finishes											....
 
 	* PointerToggle will be stopped when the games completed				done
 	* mine field will be visible on pointer toogling... now writes zero		done
 	* GetRowColumnFromUser ...  Guard is needed !							....
+	* clear the code														....
+	* mine is hit end game loser											....
+	* colorful Mine															....
 */

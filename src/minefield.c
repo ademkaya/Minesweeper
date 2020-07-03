@@ -16,8 +16,10 @@ static const char LTCornerline = (char)201;
 static const char LBCornerline = (char)200;
 
 static mineData_Typedef** staticPtr = NULL;
-static uint32_t staticRow = 0;
-static uint32_t staticColumn = 0;
+static uint16_t staticRow = 0;
+static uint16_t staticColumn = 0;
+static uint8_t staticPrintXOffSet = 0;
+static uint8_t staticPrintYOffSet = 0;
 
 static uint16_t totalMineCount = 0;
 static uint16_t correctlyflaggedMineCount = 0;
@@ -107,38 +109,51 @@ void PrintMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8
 		}
 	}
 
+	staticPrintXOffSet = PrintXOffSet;
+	staticPrintYOffSet = PrintYOffSet;
+
 	SnakeframeCreation(PrintXOffSet - 1, PrintYOffSet - 1, column+1, row+1);
 }
-void PrintMergedMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet,bool activateVisibility) {
+void PrintMergedMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet,bool activateVisibility,bool isMineHit) {
 	int c = 0;
 	int r = 0;
 
 	for (c = 0; c < column; c++) {
 		for (r = 0; r < row; r++) {
-			if (activateVisibility) {
-				if (staticPtr[c][r].mineVisibility)
-				{
-					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, staticPtr[c][r].mergedMap);
+			if (isMineHit) {
+				staticPtr[c][r].mineVisibility = true;
+				printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, staticPtr[c][r].mergedMap);
+			} else {
+				if (activateVisibility) {
+					if (staticPtr[c][r].mineVisibility)
+					{
+						printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, staticPtr[c][r].mergedMap);
+
+					} else {
+
+						printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, (char)mineBlock);
+
+					}
+
+					if (staticPtr[c][r].mineFlaggedByUser) {
+						printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, (char)flaggedMine);
+					}
 
 				} else {
-
 					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, (char)mineBlock);
-
 				}
-
-				if (staticPtr[c][r].mineFlaggedByUser) {
-					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, (char)flaggedMine);
-				}
-
-			} else {
-					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, (char)mineBlock);
 			}
 		}
 	}
 
+	staticPrintXOffSet = PrintXOffSet;
+	staticPrintYOffSet = PrintYOffSet;
+
 	SnakeframeCreation(PrintXOffSet - 1, PrintYOffSet - 1, column + 1, row + 1);
 }
-
+void EndGameCheer(void) {
+	printStringOnSpesificLocation(staticPrintXOffSet+staticColumn/2, staticPrintYOffSet-2, "!!! GAME OVER !!!");
+}
 void PrintMinePossibility(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet,bool activateVisibility) {
 
 	int c = 0;

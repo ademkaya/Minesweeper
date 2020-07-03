@@ -8,7 +8,7 @@
 #define mineIcon	(char)'M'
 #define nomineIcon	(char)'0'
 #define flaggedMine	(char)176
-
+#define endGame		(char)'X'
 
 
 typedef struct mineData {
@@ -24,12 +24,14 @@ bool initField(mineData_Typedef*** ptr, uint16_t row, uint16_t column, bool Assi
 
 void PrintMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet);
 void PrintMinePossibility(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet, bool activateVisibility);
-void PrintMergedMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet, bool activateVisibility);
+void PrintMergedMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet, bool activateVisibility, bool isMineHit);
 
 void constrainedCopy(mineData_Typedef** a, mineData_Typedef** b, uint16_t row, uint16_t column);
 void CalculateTheMinePossibility(void);
 void changeVisibilityOfPossibilityMap(mineData_Typedef** a, bool revealtheFlagged, bool setVal);
 void randomFill(void);
+void EndGameCheer(void);
+
 
 char PointerToggle(char keyPress, mineData_Typedef** mineStr, Coord_Typedef* ptr, uint8_t PrintXOffSet, uint8_t PrintYOffSet);
 
