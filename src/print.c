@@ -3,8 +3,6 @@
 #include <conio.h>
 
 
-void printCharOnSpesificLocation(uint16_t X, uint16_t Y, char chr);
-void printStringOnSpesificLocation(uint16_t X, uint16_t Y, char* str);
 char NonBlockingKeyPressDetection(void);
 char BlockingkeyPressDetection(void);
 void clearScreen(void);
@@ -13,12 +11,12 @@ bool getChar_(char* ch);
 
 
 /*--- Interaction ---*/
-void printStringOnSpesificLocation(uint16_t X, uint16_t Y, char* str) {
-    printf("\337\33[%d;%dH%s\338", Y, X, str);
+void printStringOnSpesificLocation(uint16_t X, uint16_t Y,uint8_t color,char* str) {    
+    printf("\033[%dm\337\33[%d;%dH%s\338",color, Y, X, str);
 }
 /*--- Interaction ---*/
-void printCharOnSpesificLocation(uint16_t X, uint16_t Y, char chr) {
-    printf("\337\33[%d;%dH%c\338", Y, X, chr);
+void printCharOnSpesificLocation(uint16_t X, uint16_t Y, uint8_t color, char chr) {
+    printf("\033[%dm\337\33[%d;%dH%c\338",color, Y, X, chr);
 }
 
 char NonBlockingKeyPressDetection(void) {

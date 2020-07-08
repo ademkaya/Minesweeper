@@ -22,6 +22,7 @@ static const uint8_t YOffset = 12;
 
 mineData_Typedef** ptrMirror = NULL;
 mineData_Typedef** ptr=NULL;
+
 int main(void) {
 
 	static bool flagResult = false;
@@ -29,7 +30,16 @@ int main(void) {
 	static char statickP = -1;
 	static char mineResult = false;
 
-	puts("\n\nHOW TO PLAY : \n - Flag the possible mine, pressing 'M' character \n - Reveal the area, pressing 'R' character\n" );
+	//printf("\033[%dm %3d\033[m", 5, 9);
+	//printf("deneme");
+	//for (int a = 1; a < 200; a++) {
+	//	printf("\033[%dm%s", 96, &"-deneme\n");
+	//}
+	//	printf("\033[%dm%s", nomineColor, &"-deneme\n");
+
+	
+	printf("%s %c %s %c %s","\n\nHOW TO PLAY : \n - Flag the possible mine, pressing",instruction_OPEN,"character \n - Reveal the area, pressing",instruction_FLAG,"character\n");
+	
 	GetRowColumnFromUser(&row,&column);
 
 	initField(&ptr, row, column, true);
@@ -60,7 +70,7 @@ int main(void) {
 					// stop the toggling icon
 					// -- gets into MovePointer via flagResult then stops the pointer
 					// and congragulate the player
-					// ....
+					WinnerCheer();
 					// game successfully finishes...
 					//...
 				}
@@ -71,7 +81,7 @@ int main(void) {
 		}
 
 		/* move pointer inside the mine map*/
-		MovePointer(keyPress, ptr,&pointerCoord, XOffset, YOffset, column, row, flagResult);   // print part may be put outside of the function
+		MovePointer(keyPress, ptr,&pointerCoord, XOffset, YOffset, column, row, flagResult|| mineResult);   // print part may be put outside of the function
 
 		/*update the mine map when a key pressed*/
 		if (statickP != keyPress) {
@@ -128,7 +138,7 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 	if (!IsgameFinishes)
 		PointerToggle(keyPress, mineStr, ptr, PrintXOffSet, PrintYOffSet);
 	else
-		printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, mineStr[ptr->X][ptr->Y].mergedMap);
+		printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, nomineColor, mineStr[ptr->X][ptr->Y].mergedMap);
 
 	if (keyPress == 0) {
 		return;
@@ -158,12 +168,11 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 
 	// recover back old icon back on the map
 	if (mineStr[prePointerPtr.X - PrintXOffSet][prePointerPtr.Y - PrintYOffSet].mineVisibility) {
-		printCharOnSpesificLocation(prePointerPtr.X, prePointerPtr.Y, mineStr[prePointerPtr.X - PrintXOffSet][prePointerPtr.Y - PrintYOffSet].mergedMap);
+		printCharOnSpesificLocation(prePointerPtr.X, prePointerPtr.Y, nomineColor, mineStr[prePointerPtr.X - PrintXOffSet][prePointerPtr.Y - PrintYOffSet].mergedMap);
+	} else {
+		printCharOnSpesificLocation(prePointerPtr.X, prePointerPtr.Y,nomineColor, (char)mineBlock);
 	}
-	else {
-		printCharOnSpesificLocation(prePointerPtr.X, prePointerPtr.Y, (char)mineBlock);
-	}
-	printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, pointerIcon);
+	printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, nomineColor, pointerIcon);
 	prePointerPtr.X = (ptr->X)+ PrintXOffSet;
 	prePointerPtr.Y = (ptr->Y)+ PrintYOffSet;
 
@@ -181,21 +190,22 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 
 	* mines are created in random fashion									done
 	* possibility map is created.											done
-	* map cover which will be gradually makes the area visible				done
-	* user interaction														partially done
+	* map cover which will be gradually makes the area visible				done	
 	* [R]eveal interaction will be processed								done
 
-	* [M]ine   interaction will be processed								done
-	* totalMineCount is added will be resetted when a new game started		....
+	* [M]ine   interaction will be processed								done	
 	* flagMine will be completed											done
 	* unflagMine will be added												done
-	* congragulate the player												....
-	* game successfully finishes											....
+	* congragulate the player												done
+	* game successfully finishes											done
 
 	* PointerToggle will be stopped when the games completed				done
 	* mine field will be visible on pointer toogling... now writes zero		done
 	* GetRowColumnFromUser ...  Guard is needed !							....
 	* clear the code														....
-	* mine is hit end game loser											....
-	* colorful Mine															....
+	* mine is hit end game loser											done
+	* colorful Mine															partially done
+	* user interaction														partially done
+	* Quit Restart game														....
+	* totalMineCount is added will be resetted when a new game started		....
 */

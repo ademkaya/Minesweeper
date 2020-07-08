@@ -10,6 +10,8 @@
 #define flaggedMine	(char)176
 #define endGame		(char)'X'
 
+#define mineColor	(uint8_t)91
+#define nomineColor	(uint8_t)97
 
 typedef struct mineData {
 	bool mineVisibility;
@@ -30,8 +32,9 @@ void constrainedCopy(mineData_Typedef** a, mineData_Typedef** b, uint16_t row, u
 void CalculateTheMinePossibility(void);
 void changeVisibilityOfPossibilityMap(mineData_Typedef** a, bool revealtheFlagged, bool setVal);
 void randomFill(void);
-void EndGameCheer(void);
 
+void EndGameCheer(void);
+void WinnerCheer(void);
 
 char PointerToggle(char keyPress, mineData_Typedef** mineStr, Coord_Typedef* ptr, uint8_t PrintXOffSet, uint8_t PrintYOffSet);
 

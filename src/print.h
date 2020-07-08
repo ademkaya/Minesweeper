@@ -33,8 +33,8 @@ extern "C" {
 		int16_t Y;
 	}Coord_Typedef;
 
-	void printCharOnSpesificLocation(uint16_t X, uint16_t Y, char chr);
-	void printStringOnSpesificLocation(uint16_t X, uint16_t Y, char* str);
+	void printStringOnSpesificLocation(uint16_t X, uint16_t Y, uint8_t color, char* str);
+	void printCharOnSpesificLocation(uint16_t X, uint16_t Y, uint8_t color, char chr);
 	char NonBlockingKeyPressDetection(void);
 	char BlockingkeyPressDetection(void);
 	void clearScreen(void);
