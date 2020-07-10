@@ -30,14 +30,7 @@ int main(void) {
 	static char statickP = -1;
 	static char mineResult = false;
 
-	//printf("\033[%dm %3d\033[m", 5, 9);
-	//printf("deneme");
-	//for (int a = 1; a < 200; a++) {
-	//	printf("\033[%dm%s", 96, &"-deneme\n");
-	//}
-	//	printf("\033[%dm%s", nomineColor, &"-deneme\n");
-
-	
+	printStringOnSpesificLocation(0, 0, WhiteColor, " ");
 	printf("%s %c %s %c %s","\n\nHOW TO PLAY : \n - Flag the possible mine, pressing",instruction_OPEN,"character \n - Reveal the area, pressing",instruction_FLAG,"character\n");
 	
 	GetRowColumnFromUser(&row,&column);
@@ -137,9 +130,12 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 
 	if (!IsgameFinishes)
 		PointerToggle(keyPress, mineStr, ptr, PrintXOffSet, PrintYOffSet);
-	else
-		printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, nomineColor, mineStr[ptr->X][ptr->Y].mergedMap);
-
+	else {
+		if (!mineStr[ptr->X][ptr->Y].mine)
+			printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, WhiteColor, mineStr[ptr->X][ptr->Y].mergedMap);
+		else
+			printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, RedColor, mineStr[ptr->X][ptr->Y].mergedMap);
+	}
 	if (keyPress == 0) {
 		return;
 	}
@@ -168,11 +164,11 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 
 	// recover back old icon back on the map
 	if (mineStr[prePointerPtr.X - PrintXOffSet][prePointerPtr.Y - PrintYOffSet].mineVisibility) {
-		printCharOnSpesificLocation(prePointerPtr.X, prePointerPtr.Y, nomineColor, mineStr[prePointerPtr.X - PrintXOffSet][prePointerPtr.Y - PrintYOffSet].mergedMap);
+		printCharOnSpesificLocation(prePointerPtr.X, prePointerPtr.Y, WhiteColor, mineStr[prePointerPtr.X - PrintXOffSet][prePointerPtr.Y - PrintYOffSet].mergedMap);
 	} else {
-		printCharOnSpesificLocation(prePointerPtr.X, prePointerPtr.Y,nomineColor, (char)mineBlock);
+		printCharOnSpesificLocation(prePointerPtr.X, prePointerPtr.Y,WhiteColor, (char)mineBlock);
 	}
-	printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, nomineColor, pointerIcon);
+	printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, WhiteColor, pointerIcon);
 	prePointerPtr.X = (ptr->X)+ PrintXOffSet;
 	prePointerPtr.Y = (ptr->Y)+ PrintYOffSet;
 
@@ -208,4 +204,5 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 	* user interaction														partially done
 	* Quit Restart game														....
 	* totalMineCount is added will be resetted when a new game started		....
+	* zero mine initialized  field											....
 */

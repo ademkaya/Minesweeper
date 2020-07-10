@@ -70,18 +70,18 @@ char PointerToggle(char keyPress, mineData_Typedef** mineStr, Coord_Typedef* ptr
 			if (!IconToogle) {
 				if (mineStr[ptr->X][ptr->Y].mineVisibility) {
 					if (!mineStr[ptr->X][ptr->Y].mineFlaggedByUser)
-						printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, nomineColor, mineStr[ptr->X][ptr->Y].mergedMap);
+						printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, WhiteColor, mineStr[ptr->X][ptr->Y].mergedMap);						
 					else
-						printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, nomineColor, flaggedMine);
+						printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, WhiteColor, flaggedMine);
 				} else {
 					if (!mineStr[ptr->X][ptr->Y].mineFlaggedByUser)
-						printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, nomineColor, 0);
+						printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, WhiteColor, 0);
 					else
-						printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, nomineColor, flaggedMine);
+						printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, WhiteColor, flaggedMine);
 				}
 			}
 			else {
-				printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, nomineColor, pointerIcon);
+				printCharOnSpesificLocation(ptr->X + PrintXOffSet, ptr->Y + PrintYOffSet, WhiteColor, pointerIcon);
 			}
 			IconToogle = !IconToogle;
 		}
@@ -95,25 +95,25 @@ char PointerToggle(char keyPress, mineData_Typedef** mineStr, Coord_Typedef* ptr
 }
 
 
-void PrintMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet) {
-
-	int c = 0;
-	int r = 0;
-
-	for (c = 0; c < column; c++) {
-		for (r = 0; r < row; r++) {
-			if (ptr[c][r].mine == true)
-				printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, mineColor, mineIcon);
-			else
-				printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, nomineColor, nomineIcon);
-		}
-	}
-
-	staticPrintXOffSet = PrintXOffSet;
-	staticPrintYOffSet = PrintYOffSet;
-
-	SnakeframeCreation(PrintXOffSet - 1, PrintYOffSet - 1, column+1, row+1);
-}
+//void PrintMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet) {
+//
+//	int c = 0;
+//	int r = 0;
+//
+//	for (c = 0; c < column; c++) {
+//		for (r = 0; r < row; r++) {
+//			if (ptr[c][r].mine == true)
+//				printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, mineColor, mineIcon);
+//			else
+//				printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, WhiteColor, nomineIcon);
+//		}
+//	}
+//
+//	staticPrintXOffSet = PrintXOffSet;
+//	staticPrintYOffSet = PrintYOffSet;
+//
+//	SnakeframeCreation(PrintXOffSet - 1, PrintYOffSet - 1, column+1, row+1);
+//}
 
 void PrintMergedMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet,bool activateVisibility,bool isMineHit) {
 	int c = 0;
@@ -122,26 +122,32 @@ void PrintMergedMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column,
 	for (c = 0; c < column; c++) {
 		for (r = 0; r < row; r++) {
 			if (isMineHit) {
-				staticPtr[c][r].mineVisibility = true;
-					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, nomineColor, staticPtr[c][r].mergedMap);
+
+				if (!staticPtr[c][r].mineVisibility) {
+					staticPtr[c][r].mineVisibility = true;
+					if (staticPtr[c][r].mine)
+						printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, RedColor, staticPtr[c][r].mergedMap);
+					else
+						printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, WhiteColor, staticPtr[c][r].mergedMap);
+				}
 			} else {
 				if (activateVisibility) {
 					if (staticPtr[c][r].mineVisibility)
 					{
-							printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, nomineColor, staticPtr[c][r].mergedMap);
+						printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, WhiteColor, staticPtr[c][r].mergedMap);
 
 					} else {
 
-						printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, nomineColor, (char)mineBlock);
+						printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, WhiteColor, (char)mineBlock);
 
 					}
 
 					if (staticPtr[c][r].mineFlaggedByUser) {
-						printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, nomineColor, (char)flaggedMine);
+						printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, WhiteColor, (char)flaggedMine);
 					}
 
 				} else {
-					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, nomineColor, (char)mineBlock);
+					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, WhiteColor, (char)mineBlock);
 				}
 			}
 		}
@@ -154,10 +160,12 @@ void PrintMergedMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column,
 }
 
 void EndGameCheer(void) {
-	printStringOnSpesificLocation(staticPrintXOffSet+staticColumn/2, staticPrintYOffSet-2, nomineColor, "!!! GAME OVER !!!");
+	printStringOnSpesificLocation(staticPrintXOffSet+staticColumn/2, staticPrintYOffSet-2, RedColor, "!!! GAME OVER !!!");
+	printStringOnSpesificLocation(0,0, WhiteColor, " ");
 }
 void WinnerCheer(void) {
-	printStringOnSpesificLocation(staticPrintXOffSet , staticPrintYOffSet - 2, nomineColor, "Congratulations, You WON !!");
+	printStringOnSpesificLocation(staticPrintXOffSet , staticPrintYOffSet - 2, GreenColor, "Congratulations, You WON !!");
+	printStringOnSpesificLocation(0, 0, WhiteColor, " ");
 }
 void PrintMinePossibility(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet,bool activateVisibility) {
 
@@ -168,11 +176,11 @@ void PrintMinePossibility(mineData_Typedef** ptr, uint16_t row, uint16_t column,
 		for (r = 0; r < row; r++) {
 			if (activateVisibility) {
 				if (ptr[c][r].mineVisibility)
-					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, nomineColor, ptr[c][r].minePossibility);
+					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, WhiteColor, ptr[c][r].minePossibility);
 				else
-					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, nomineColor, (char)mineBlock);
+					printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, WhiteColor, (char)mineBlock);
 			} else {
-				printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, nomineColor, ptr[c][r].minePossibility);
+				printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, WhiteColor, ptr[c][r].minePossibility);
 			}
 		}
 	}
@@ -313,20 +321,20 @@ bool checkMine(int16_t crow, int16_t ccolumn,bool firstStart) {
 
 static void SnakeframeCreation(uint8_t xOrigin, uint8_t yOrigin, uint16_t xLength, uint16_t yLength) {
 
-	printCharOnSpesificLocation(xOrigin, yOrigin, nomineColor, LTCornerline);
-	printCharOnSpesificLocation(xOrigin + xLength, yOrigin, nomineColor, RTCornerline);
+	printCharOnSpesificLocation(xOrigin, yOrigin, WhiteColor, LTCornerline);
+	printCharOnSpesificLocation(xOrigin + xLength, yOrigin, WhiteColor, RTCornerline);
 
-	printCharOnSpesificLocation(xOrigin, yOrigin + yLength, nomineColor, LBCornerline);
-	printCharOnSpesificLocation(xOrigin + xLength, yOrigin + yLength, nomineColor, RBCornerline);
+	printCharOnSpesificLocation(xOrigin, yOrigin + yLength, WhiteColor, LBCornerline);
+	printCharOnSpesificLocation(xOrigin + xLength, yOrigin + yLength, WhiteColor, RBCornerline);
 
 
 	for (uint16_t x = 1; x < xLength; x++) {
-		printCharOnSpesificLocation(xOrigin + x, yOrigin, nomineColor, Hline);
-		printCharOnSpesificLocation(xOrigin + x, yOrigin + yLength, nomineColor, Hline);
+		printCharOnSpesificLocation(xOrigin + x, yOrigin, WhiteColor, Hline);
+		printCharOnSpesificLocation(xOrigin + x, yOrigin + yLength, WhiteColor, Hline);
 	}
 	for (uint16_t y = 1; y < yLength; y++) {
-		printCharOnSpesificLocation(xOrigin, yOrigin + y, nomineColor, Vline);
-		printCharOnSpesificLocation(xOrigin + xLength, yOrigin + y, nomineColor, Vline);
+		printCharOnSpesificLocation(xOrigin, yOrigin + y, WhiteColor, Vline);
+		printCharOnSpesificLocation(xOrigin + xLength, yOrigin + y, WhiteColor, Vline);
 	}
 }
 /* VVVV STATICS COMES HERE VVVV */

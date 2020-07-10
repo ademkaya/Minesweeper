@@ -1,2 +1,4 @@
 E:\GIT_REPO\minefield\app\Debug\app.exe
 E:\GIT_REPO\minefield\app\Debug\app.pdb
+E:\GIT_REPO\minesweeper\app\Debug\app.exe
+E:\GIT_REPO\minesweeper\app\Debug\app.pdb

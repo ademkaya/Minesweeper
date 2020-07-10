@@ -28,6 +28,14 @@ extern "C" {
 #define instruction_RemoveFLAG	(char)'F'
 #define instruction_OPEN		(char)'O'
 
+#define RedColor			(uint8_t)91
+#define WhiteColor			(uint8_t)97
+#define GreenColor			(uint8_t)92
+#define BackRedWhiteFont	(uint8_t)41
+#define BackGreenWhiteFont	(uint8_t)42
+#define BackYellowWhiteFont	(uint8_t)43
+#define BackBlackWhiteFont	(uint8_t)49
+
 	typedef struct coord {
 		int16_t X;
 		int16_t Y;

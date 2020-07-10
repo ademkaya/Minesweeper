@@ -10,8 +10,7 @@
 #define flaggedMine	(char)176
 #define endGame		(char)'X'
 
-#define mineColor	(uint8_t)91
-#define nomineColor	(uint8_t)97
+
 
 typedef struct mineData {
 	bool mineVisibility;
