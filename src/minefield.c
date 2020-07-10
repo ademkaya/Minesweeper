@@ -125,6 +125,7 @@ void PrintMergedMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column,
 
 				if (!staticPtr[c][r].mineVisibility) {
 					staticPtr[c][r].mineVisibility = true;
+					staticPtr[c][r].mineFlaggedByUser = false;
 					if (staticPtr[c][r].mine)
 						printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, RedColor, staticPtr[c][r].mergedMap);
 					else
@@ -143,7 +144,7 @@ void PrintMergedMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column,
 					}
 
 					if (staticPtr[c][r].mineFlaggedByUser) {
-						printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, WhiteColor, (char)flaggedMine);
+						printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, CyanColor, (char)flaggedMine);
 					}
 
 				} else {

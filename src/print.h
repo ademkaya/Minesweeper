@@ -31,6 +31,10 @@ extern "C" {
 #define RedColor			(uint8_t)91
 #define WhiteColor			(uint8_t)97
 #define GreenColor			(uint8_t)92
+#define YellowColor			(uint8_t)93
+#define BlueColor			(uint8_t)94
+#define CyanColor			(uint8_t)96
+
 #define BackRedWhiteFont	(uint8_t)41
 #define BackGreenWhiteFont	(uint8_t)42
 #define BackYellowWhiteFont	(uint8_t)43
