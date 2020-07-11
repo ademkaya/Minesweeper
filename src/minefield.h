@@ -24,6 +24,7 @@ typedef struct mineData {
 
 
 bool initField(mineData_Typedef*** ptr, uint16_t row, uint16_t column, bool AssignAsActual);
+void clearPrvMineStr(void);
 
 //void PrintMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet);
 void PrintMinePossibility(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet, bool activateVisibility);

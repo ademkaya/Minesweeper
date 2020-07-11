@@ -20,7 +20,7 @@ static uint16_t row = 0;
 static const uint8_t XOffset = 5;
 static const uint8_t YOffset = 12;
 
-mineData_Typedef** ptrMirror = NULL;
+//mineData_Typedef** ptrMirror = NULL;
 mineData_Typedef** ptr=NULL;
 
 int main(void) {
@@ -33,10 +33,12 @@ int main(void) {
 
 	restart:
 
-	singleWriteRestartQuit = false;								/* clear the lock		   */		
-	zeroTheMineCount();											/* clear the mine count	   */
-	memset(&pointerCoord, 0, sizeof(Coord_Typedef));			/* clear the pointer coord */
-
+	singleWriteRestartQuit = false;								/* clear the lock					  */		
+	zeroTheMineCount();											/* clear the mine count				  */
+	memset(&pointerCoord, 0, sizeof(Coord_Typedef));			/* clear the pointer coord			  */
+	if (ptr) {
+		clearPrvMineStr();										/* clear the previous mine field data */
+	}
 
 	printStringOnSpesificLocation(0, 0, WhiteColor, " ");
 	printf("%s %c %s %c %s","\n\nHOW TO PLAY : \n - Flag the possible mine, pressing",instruction_FLAG,"character \n - Reveal the area, pressing",instruction_OPEN,"character\n");
@@ -238,4 +240,5 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 	* totalMineCount is added will be resetted when a new game started		done
 	* remove the zeros from the map text									....
 	* clear the code														....
+	* won game text coloring bug											....
 */

@@ -28,6 +28,16 @@ static uint8_t Mchecker(int16_t xCalc, int16_t yCalc);
 static bool limitsCheck(int16_t xCalc, int16_t yCalc);
 static void SnakeframeCreation(uint8_t xOrigin, uint8_t yOrigin, uint16_t xLength, uint16_t yLength);
 
+
+void clearPrvMineStr(void) {
+	
+	for (uint16_t cntr = 0; cntr < staticColumn; cntr++) {
+		memset(staticPtr[cntr], 0, staticRow * sizeof(mineData_Typedef));  // zero the allocated pointers
+	}
+
+	memset(staticPtr, 0, staticColumn * sizeof(mineData_Typedef*));  // zero the allocated pointers
+}
+
 bool initField(mineData_Typedef*** ptr,uint16_t row, uint16_t column,bool AssignAsActual) {
 	bool retVal = true;
 	uint16_t cntr = 0;
@@ -173,7 +183,7 @@ void WinnerCheer(void) {
 	printStringOnSpesificLocation(0, 0, WhiteColor, " ");
 }
 void ShouldIRestartTheGame(void) {
-	printStringOnSpesificLocation(staticPrintXOffSet + staticColumn / 2, staticPrintYOffSet + staticColumn + 2, YellowColor, "Restart [R] Or Quit [Q] ?");
+	printStringOnSpesificLocation(staticPrintXOffSet + staticColumn / 2, staticPrintYOffSet + staticRow + 2, YellowColor, "Restart [R] Or Quit [Q] ?");
 	printStringOnSpesificLocation(0, 0, WhiteColor, " ");
 
 }
