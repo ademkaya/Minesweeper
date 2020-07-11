@@ -25,13 +25,21 @@ mineData_Typedef** ptr=NULL;
 
 int main(void) {
 
+	static bool singleWriteRestartQuit = false;
 	static bool flagResult = false;
 	static char keyPress = 0;
 	static char statickP = -1;
 	static char mineResult = false;
 
+	restart:
+
+	singleWriteRestartQuit = false;								/* clear the lock		   */		
+	zeroTheMineCount();											/* clear the mine count	   */
+	memset(&pointerCoord, 0, sizeof(Coord_Typedef));			/* clear the pointer coord */
+
+
 	printStringOnSpesificLocation(0, 0, WhiteColor, " ");
-	printf("%s %c %s %c %s","\n\nHOW TO PLAY : \n - Flag the possible mine, pressing",instruction_OPEN,"character \n - Reveal the area, pressing",instruction_FLAG,"character\n");
+	printf("%s %c %s %c %s","\n\nHOW TO PLAY : \n - Flag the possible mine, pressing",instruction_FLAG,"character \n - Reveal the area, pressing",instruction_OPEN,"character\n");
 	
 	GetRowColumnFromUser(&row,&column);
 
@@ -81,6 +89,25 @@ int main(void) {
 			PrintMergedMineField(ptr, row, column, XOffset, YOffset, true, mineResult);
 			statickP = keyPress;
 		}
+
+		// restart questioning ..... 
+		if (flagResult || mineResult) {	
+			
+			if (!singleWriteRestartQuit) {
+				singleWriteRestartQuit = true;
+				ShouldIRestartTheGame();
+			}
+
+			if (keyPress == RestartGame) {
+				clearScreen();
+				goto restart;
+			}
+			else if (keyPress == QuitGame) {
+				clearScreen();
+				break;
+			}
+		}
+
 	}
 
 	return EXIT_SUCCESS;
@@ -94,7 +121,12 @@ void GetRowColumnFromUser(int16_t* r, int16_t* c) {
 	printf("Enter the COLUMN value of the field : ");
 	scanf("%d", (int*)c);
 
-	//printf("%d %d", *r, *c);
+	// zero input guard
+	if (*r == 0)
+		*r += 1;
+	if (*c == 0)
+		*c += 1;
+	
 }
 
 void intentionallyFill_Test(mineData_Typedef** _ptr, uint16_t row, uint16_t column) {
@@ -198,11 +230,12 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 	* PointerToggle will be stopped when the games completed				done
 	* mine field will be visible on pointer toogling... now writes zero		done		
 	* mine is hit end game loser											done
-	* colorful Mine															done
-	* user interaction														partially done
-	* Quit Restart game														....
-	* totalMineCount is added will be resetted when a new game started		....
-	* GetRowColumnFromUser ...  Guard is needed !							....
-	* zero mine initialized  field											....
+	* colorful Mine															done	
+	* GetRowColumnFromUser ...  Guard is needed !							done
+	* zero mine initialized  field											done
+	* user interaction														done
+	* Quit Restart game														done
+	* totalMineCount is added will be resetted when a new game started		done
+	* remove the zeros from the map text									....
 	* clear the code														....
 */

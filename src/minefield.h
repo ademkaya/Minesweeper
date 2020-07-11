@@ -10,6 +10,8 @@
 #define flaggedMine	(char)176
 #define endGame		(char)'X'
 
+#define RestartGame	(char)'R'
+#define QuitGame	(char)'Q'
 
 
 typedef struct mineData {
@@ -23,7 +25,7 @@ typedef struct mineData {
 
 bool initField(mineData_Typedef*** ptr, uint16_t row, uint16_t column, bool AssignAsActual);
 
-void PrintMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet);
+//void PrintMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet);
 void PrintMinePossibility(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet, bool activateVisibility);
 void PrintMergedMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet, bool activateVisibility, bool isMineHit);
 
@@ -34,6 +36,8 @@ void randomFill(void);
 
 void EndGameCheer(void);
 void WinnerCheer(void);
+void ShouldIRestartTheGame(void);
+void zeroTheMineCount(void);
 
 char PointerToggle(char keyPress, mineData_Typedef** mineStr, Coord_Typedef* ptr, uint8_t PrintXOffSet, uint8_t PrintYOffSet);
 

@@ -32,16 +32,20 @@ bool initField(mineData_Typedef*** ptr,uint16_t row, uint16_t column,bool Assign
 	bool retVal = true;
 	uint16_t cntr = 0;
 
-	*ptr = (mineData_Typedef**)calloc(column, sizeof(mineData_Typedef*));
-	if (!*ptr) {
+	//	*ptr = (mineData_Typedef**)calloc(column, sizeof(mineData_Typedef*));
+	*ptr = (mineData_Typedef**)realloc(*ptr, column * sizeof(mineData_Typedef*));
+	memset(*ptr, 0, column * sizeof(mineData_Typedef*));  // zero the allocated pointers
+	if (*ptr==NULL) {
 		puts("Allocation Error");
 		retVal = false;
 
 	} else {
 
 		for (cntr = 0; cntr < column; cntr++) {
-			(*ptr)[cntr] = (mineData_Typedef*)calloc(row, sizeof(mineData_Typedef));
-			if (!(*ptr)[cntr]) {
+			//(*ptr)[cntr] = (mineData_Typedef*)calloc(row, sizeof(mineData_Typedef));
+			(*ptr)[cntr] = (mineData_Typedef*)realloc((*ptr)[cntr], row * sizeof(mineData_Typedef));
+			memset((*ptr)[cntr], 0, row * sizeof(mineData_Typedef));  // zero the allocated pointers
+			if ((*ptr)[cntr]==NULL) {
 				puts("Allocation Error");
 				retVal = false;
 				break;
@@ -168,6 +172,12 @@ void WinnerCheer(void) {
 	printStringOnSpesificLocation(staticPrintXOffSet , staticPrintYOffSet - 2, GreenColor, "Congratulations, You WON !!");
 	printStringOnSpesificLocation(0, 0, WhiteColor, " ");
 }
+void ShouldIRestartTheGame(void) {
+	printStringOnSpesificLocation(staticPrintXOffSet + staticColumn / 2, staticPrintYOffSet + staticColumn + 2, YellowColor, "Restart [R] Or Quit [Q] ?");
+	printStringOnSpesificLocation(0, 0, WhiteColor, " ");
+
+}
+
 void PrintMinePossibility(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet,bool activateVisibility) {
 
 	int c = 0;
@@ -239,19 +249,25 @@ void randomFill(void) {
 	uint16_t r = 0;
 	int rrr = 0;
 
-	for (c = 0; c < staticColumn; c++) {
-		for (r = 0; r < staticRow; r++) {
+	while (totalMineCount == 0) {
+		for (c = 0; c < staticColumn; c++) {
+			for (r = 0; r < staticRow; r++) {
 
-			staticPtr[c][r].mine = false;
-			staticPtr[c][r].mineVisibility = false;		/* as default hide all*/
+				staticPtr[c][r].mine = false;
+				staticPtr[c][r].mineVisibility = false;		/* as default hide all*/
 
-			rrr = (int)rand() % 20;
-			if (rrr == 10) {
-				staticPtr[c][r].mine = true;
-				totalMineCount += 1;
+				rrr = (int)rand() % 20;
+				if (rrr == 10) {
+					staticPtr[c][r].mine = true;
+					totalMineCount += 1;
+				}
 			}
 		}
 	}
+}
+
+void zeroTheMineCount(void) {
+	totalMineCount = 0;
 }
 
 /* user input comes here*/
