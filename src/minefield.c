@@ -3,7 +3,6 @@
 #include <stdio.h>		//puts
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 
 #include "print.h"
 #include "minefield.h"
@@ -54,6 +53,7 @@ bool initField(mineData_Typedef*** ptr,uint16_t row, uint16_t column,bool Assign
 		for (cntr = 0; cntr < column; cntr++) {
 			//(*ptr)[cntr] = (mineData_Typedef*)calloc(row, sizeof(mineData_Typedef));
 			(*ptr)[cntr] = (mineData_Typedef*)realloc((*ptr)[cntr], row * sizeof(mineData_Typedef));
+
 			memset((*ptr)[cntr], 0, row * sizeof(mineData_Typedef));  // zero the allocated pointers
 			if ((*ptr)[cntr]==NULL) {
 				puts("Allocation Error");
@@ -67,7 +67,6 @@ bool initField(mineData_Typedef*** ptr,uint16_t row, uint16_t column,bool Assign
 		staticPtr = *ptr;
 		staticRow = row;
 		staticColumn = column;
-		srand((uint32_t)time(NULL));   // Initialization, should only be called once.
 	}
 
 	return retVal;
@@ -282,6 +281,7 @@ void randomFill(void) {
 
 void zeroTheMineCount(void) {
 	totalMineCount = 0;
+	correctlyflaggedMineCount = 0;
 }
 
 /* user input comes here*/

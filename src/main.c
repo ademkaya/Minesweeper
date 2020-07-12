@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "print.h"
 #include "minefield.h"
@@ -23,27 +24,31 @@ static const uint8_t YOffset = 12;
 //mineData_Typedef** ptrMirror = NULL;
 mineData_Typedef** ptr=NULL;
 
-int main(void) {
+static bool singleWriteRestartQuit = false;
+static bool flagResult = false;
+static bool mineResult = false;
+static char keyPress = 0;
+static char statickP = 0xFF;
 
-	static bool singleWriteRestartQuit = false;
-	static bool flagResult = false;
-	static char keyPress = 0;
-	static char statickP = -1;
-	static char mineResult = false;
+int main(void) {
 
 	restart:
 
+	printStringOnSpesificLocation(0, 0, WhiteColor, " ");
+	printf("%s %c %s %c %s", "\n\nHOW TO PLAY : \n - Flag the possible mine, pressing", instruction_FLAG, "character \n - Reveal the area, pressing", instruction_OPEN, "character\n");
+
+	GetRowColumnFromUser(&row, &column);
+
 	singleWriteRestartQuit = false;								/* clear the lock					  */		
+	flagResult = false;											/* clear the result					  */
+	mineResult = false;											/* clear the result					  */
+	keyPress = (char) 0;										/* clear the var					  */
+	statickP = (char) 0xFF;										/* clear the var					  */
 	zeroTheMineCount();											/* clear the mine count				  */
 	memset(&pointerCoord, 0, sizeof(Coord_Typedef));			/* clear the pointer coord			  */
 	if (ptr) {
 		clearPrvMineStr();										/* clear the previous mine field data */
 	}
-
-	printStringOnSpesificLocation(0, 0, WhiteColor, " ");
-	printf("%s %c %s %c %s","\n\nHOW TO PLAY : \n - Flag the possible mine, pressing",instruction_FLAG,"character \n - Reveal the area, pressing",instruction_OPEN,"character\n");
-	
-	GetRowColumnFromUser(&row,&column);
 
 	initField(&ptr, row, column, true);
 	randomFill();
@@ -118,16 +123,18 @@ int main(void) {
 /* Guard is needed !*/
 void GetRowColumnFromUser(int16_t* r, int16_t* c) {
 
+	srand((uint32_t)time(NULL));   // Initialization, should only be called once.
+
 	printf("Enter the ROW value of the field : ");
 	scanf("%d", (int*)r);
 	printf("Enter the COLUMN value of the field : ");
 	scanf("%d", (int*)c);
 
 	// zero input guard
-	if (*r == 0)
-		*r += 1;
-	if (*c == 0)
-		*c += 1;
+	if (*r <= 0)
+		*r = (int)rand() % 20;
+	if (*c <= 0)
+		*c = (int)rand() % 20;
 	
 }
 
