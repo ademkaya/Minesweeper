@@ -2,11 +2,11 @@
 
 #include <stdio.h>		//puts
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 #include "print.h"
 #include "minefield.h"
-
 
 static const char Hline		   = (char)205;
 static const char Vline		   = (char)186;
@@ -247,7 +247,11 @@ void CalculateTheMinePossibility(void) {
 			if (staticPtr[x][y].mine) {
 				staticPtr[x][y].mergedMap = (char)mineIcon;
 			} else {
-				staticPtr[x][y].mergedMap = staticPtr[x][y].minePossibility;
+				if (staticPtr[x][y].minePossibility == '0')
+					staticPtr[x][y].mergedMap = (char)' ';
+				else
+					staticPtr[x][y].mergedMap = staticPtr[x][y].minePossibility;
+
 			}
 		}
 	}
