@@ -128,22 +128,22 @@ char PointerToggle(char keyPress, mineData_Typedef** mineStr, Coord_Typedef* ptr
 //	SnakeframeCreation(PrintXOffSet - 1, PrintYOffSet - 1, column+1, row+1);
 //}
 
-void PrintMergedMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet,bool activateVisibility,bool isMineHit) {
+void PrintMergedMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet,bool activateVisibility,bool IsgameFinishes) {
 	int c = 0;
 	int r = 0;
 
 	for (c = 0; c < column; c++) {
 		for (r = 0; r < row; r++) {
-			if (isMineHit) {
+			if (IsgameFinishes) {
 
-				if (!staticPtr[c][r].mineVisibility) {
+				// open up all the table.
 					staticPtr[c][r].mineVisibility = true;
 					staticPtr[c][r].mineFlaggedByUser = false;
 					if (staticPtr[c][r].mine)
 						printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, RedColor, staticPtr[c][r].mergedMap);
 					else
 						printCharOnSpesificLocation(PrintXOffSet + c, PrintYOffSet + r, WhiteColor, staticPtr[c][r].mergedMap);
-				}
+
 			} else {
 				if (activateVisibility) {
 					if (staticPtr[c][r].mineVisibility)
@@ -367,6 +367,7 @@ static void SnakeframeCreation(uint8_t xOrigin, uint8_t yOrigin, uint16_t xLengt
 		printCharOnSpesificLocation(xOrigin, yOrigin + y, WhiteColor, Vline);
 		printCharOnSpesificLocation(xOrigin + xLength, yOrigin + y, WhiteColor, Vline);
 	}
+
 }
 /* VVVV STATICS COMES HERE VVVV */
 static uint8_t Mchecker(int16_t xCalc, int16_t yCalc) {

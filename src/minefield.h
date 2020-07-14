@@ -28,7 +28,7 @@ void clearPrvMineStr(void);
 
 //void PrintMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet);
 void PrintMinePossibility(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet, bool activateVisibility);
-void PrintMergedMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet, bool activateVisibility, bool isMineHit);
+void PrintMergedMineField(mineData_Typedef** ptr, uint16_t row, uint16_t column, uint8_t PrintXOffSet, uint8_t PrintYOffSet, bool activateVisibility, bool IsgameFinishes);
 
 void constrainedCopy(mineData_Typedef** a, mineData_Typedef** b, uint16_t row, uint16_t column);
 void CalculateTheMinePossibility(void);

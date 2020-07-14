@@ -18,7 +18,7 @@
 extern "C" {
 #endif
 
-#define ToogleConstant	(uint16_t)20000
+#define ToogleConstant	(uint16_t)10000
 #define pointerIcon		(char)219
 #define direction_UP	(char)'W'
 #define direction_DOWN	(char)'S'

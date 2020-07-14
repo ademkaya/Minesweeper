@@ -11,7 +11,7 @@
 
 void GetRowColumnFromUser(int16_t* r, int16_t* c);
 void intentionallyFill_Test(mineData_Typedef** _ptr, uint16_t row, uint16_t column);
-void MovePointer(char keyPress, mineData_Typedef** mineStr, Coord_Typedef* ptr, uint8_t PrintXOffSet, uint8_t PrintYOffSet, uint16_t xLength, uint16_t yLength,bool IsgameFinishes);
+void MovePointer(bool* firstCall, char keyPress, mineData_Typedef** mineStr, Coord_Typedef* ptr, uint8_t PrintXOffSet, uint8_t PrintYOffSet, uint16_t xLength, uint16_t yLength,bool IsgameFinishes);
 
 /* public pointer coordinate, relative*/
 static Coord_Typedef pointerCoord = { 0,0 };
@@ -29,8 +29,11 @@ static bool flagResult = false;
 static bool mineResult = false;
 static char keyPress = 0;
 static char statickP = 0xFF;
+static bool firstStart = false;
 
 int main(void) {
+
+	srand((uint32_t)time(NULL));								// Initialization, should only be called once.
 
 	restart:
 
@@ -39,6 +42,7 @@ int main(void) {
 
 	GetRowColumnFromUser(&row, &column);
 
+	firstStart = true;
 	singleWriteRestartQuit = false;								/* clear the lock					  */		
 	flagResult = false;											/* clear the result					  */
 	mineResult = false;											/* clear the result					  */
@@ -89,11 +93,11 @@ int main(void) {
 		}
 
 		/* move pointer inside the mine map*/
-		MovePointer(keyPress, ptr,&pointerCoord, XOffset, YOffset, column, row, flagResult|| mineResult);   // print part may be put outside of the function
+		MovePointer(&firstStart,keyPress, ptr,&pointerCoord, XOffset, YOffset, column, row, flagResult|| mineResult);   // print part may be put outside of the function
 
 		/*update the mine map when a key pressed*/
 		if (statickP != keyPress) {
-			PrintMergedMineField(ptr, row, column, XOffset, YOffset, true, mineResult);
+			PrintMergedMineField(ptr, row, column, XOffset, YOffset, true, flagResult || mineResult);
 			statickP = keyPress;
 		}
 
@@ -122,8 +126,6 @@ int main(void) {
 
 /* Guard is needed !*/
 void GetRowColumnFromUser(int16_t* r, int16_t* c) {
-
-	srand((uint32_t)time(NULL));   // Initialization, should only be called once.
 
 	printf("Enter the ROW value of the field : ");
 	scanf("%d", (int*)r);
@@ -157,14 +159,15 @@ void intentionallyFill_Test(mineData_Typedef** _ptr, uint16_t row, uint16_t colu
 	ptr[6][6].mine = true;
 }
 
-void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, uint8_t PrintXOffSet, uint8_t PrintYOffSet, uint16_t xLength, uint16_t yLength,bool IsgameFinishes)
+void MovePointer(bool* firstCall,char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, uint8_t PrintXOffSet, uint8_t PrintYOffSet, uint16_t xLength, uint16_t yLength,bool IsgameFinishes)
 {
 	static Coord_Typedef prePointerPtr = { -1,-1 };
 	static uint16_t keyPressZeroCount = 0;
 	static bool		IconToogle = false;
 
-	if ((prePointerPtr.X == -1) && (prePointerPtr.Y == -1)) {
+	if (*firstCall) {
 		/* first call*/
+		*firstCall = false;
 		prePointerPtr.X = PrintXOffSet;
 		prePointerPtr.Y = PrintYOffSet;
 	}
@@ -180,7 +183,7 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 	if (keyPress == 0) {
 		return;
 	}
-
+	
 	//char normalizedKeyPress = toupper(keyPress);
 
 	if ((keyPress == direction_UP) && ((ptr->Y - 1) >= 0)) {
@@ -245,7 +248,8 @@ void MovePointer(char keyPress, mineData_Typedef** mineStr,Coord_Typedef* ptr, u
 	* user interaction														done
 	* Quit Restart game														done
 	* totalMineCount is added will be resetted when a new game started		done
-	* remove the zeros from the map text									....
+	* remove the zeros from the map text									done
 	* clear the code														....
-	* won game text coloring bug											....
+	* won game text coloring bug											done
+
 */
